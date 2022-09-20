@@ -1,6 +1,7 @@
 {
   "name": "vault",
   "version": "0.1.0",
+  "homepage": "https://vault.b10k.io/",
   "private": true,
   "dependencies": {
     "@ibm/plex": "^6.1.1",
