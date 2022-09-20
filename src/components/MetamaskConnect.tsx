@@ -5,7 +5,7 @@ const klass = "py-2 px-4 border border-white uppercase tracking-widest"
 
 const MetamaskConnect = () => {
 
-    const { account, deactivate, activateBrowserWallet } = useEthers()
+    const { deactivate, activateBrowserWallet } = useEthers()
 
     if (useAuth()) {
         return (
