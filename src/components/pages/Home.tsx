@@ -1,7 +1,9 @@
 const Home = () => {
 
     return (
-        <h1>Home</h1>
+        <div className="flex flex-col gap-4">
+            <p>under development</p>
+        </div>
     )
 
 }
