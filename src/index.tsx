@@ -6,14 +6,28 @@ import reportWebVitals from './reportWebVitals';
 import '@ibm/plex/css/ibm-plex.css';
 import { BrowserRouter } from "react-router-dom";
 
+import { Hardhat, Mainnet, DAppProvider, Config } from '@usedapp/core'
+import { getDefaultProvider } from "ethers"
+
+const config: Config = {
+  readOnlyChainId: Hardhat.chainId,
+  readOnlyUrls: {
+    [Mainnet.chainId]: getDefaultProvider('mainnet')
+    // [Hardhat.chainId]: getDefaultProvider(),
+  },
+}
+
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <DAppProvider config={config}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </DAppProvider>
   </React.StrictMode>
 );
 

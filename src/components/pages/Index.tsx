@@ -1,15 +1,19 @@
 import { Link } from "react-router-dom"
 
 interface ITableCell {
-    className: string
+    klass: string
     to: string
     children: JSX.Element
 }
 
-const TableCell = ({ className, to, children }: ITableCell) => {
+const TableCell = ({ klass, to, children }: ITableCell) => {
     return (
-        <td className={className}>
-            <Link to={to}>{children}</Link>
+        <td className={klass}>
+            <Link to={to}>
+                <div className="py-4">
+                    {children}
+                </div>
+            </Link>
         </td>
     )
 }
@@ -17,13 +21,13 @@ const TableCell = ({ className, to, children }: ITableCell) => {
 const TableRow = () => {
     return (
         <tr className="group">
-            <TableCell className="group-hover:bg-white group-hover:text-black" to="/1234">
+            <TableCell klass="group-hover:bg-white group-hover:text-black" to="/vaults/1234">
                 <div>GOD / WBNB</div>
             </TableCell>
-            <TableCell className="text-right group-hover:bg-white group-hover:text-black" to="/1234">
+            <TableCell klass="text-right group-hover:bg-white group-hover:text-black" to="/vaults/1234">
                 <div>1,000</div>
             </TableCell>
-            <TableCell className="text-right group-hover:bg-white group-hover:text-black" to="/1234">
+            <TableCell klass="text-right group-hover:bg-white group-hover:text-black" to="/vaults/1234">
                 <div>1m 3w 2d 6h 3m</div>
             </TableCell>
         </tr>
