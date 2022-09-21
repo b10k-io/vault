@@ -20,6 +20,7 @@ contract Vault is Ownable, Pausable {
         address owner;
         uint256 amount;
         uint unlockTime;
+        uint256 amountWithdrawn;
     }
 
     Lock[] private _locks;
@@ -49,6 +50,15 @@ contract Vault is Ownable, Pausable {
         return id;
     }
 
+    function withdraw(uint _lockId) external {
+        Lock storage userLock = _locks[_lockId];
+        require(msg.sender == userLock.owner, "Caller is not the owner");
+        require(block.timestamp >= userLock.unlockTime, "Unlock time has not expired");
+        require(userLock.amountWithdrawn == 0, "Tokens already withdrawn");
+        IERC20(userLock.token).safeTransfer(msg.sender, userLock.amount);
+        userLock.amountWithdrawn = userLock.amount;
+    }
+
     // PUBLIC GETTERS
 
     function getLockAt(uint _lockId) public view returns (Lock memory) {
@@ -76,7 +86,7 @@ contract Vault is Ownable, Pausable {
         uint _unlockTime
     ) private returns (uint) {
         uint id = _locks.length;
-        Lock memory newLock = Lock(id, _token, _owner, _amount, _unlockTime);
+        Lock memory newLock = Lock(id, _token, _owner, _amount, _unlockTime, 0);
         _locks.push(newLock);
         _lockIdsByOwner[_owner].push(id);
         return id;

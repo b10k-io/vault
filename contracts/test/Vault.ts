@@ -87,7 +87,7 @@ describe("Vault", function () {
                 })
             });
 
-            describe("Transfer", function () {
+            describe("Transfers", function () {
                 it("Should transfer amount from owner to vault", async function () {
                     const { vault, owner } = await deployVaultFixture();
                     const { token, unlockTime, amount } = await defaultLock();
@@ -136,5 +136,45 @@ describe("Vault", function () {
                 expect(await vault.getTotalLockIdsForOwner(otherAccount.address)).to.eql([]);
             })
         })
+
+        describe("Withdrawls", function () {
+
+            describe("Validations", function () {
+
+                it("Should revert with the right error if called too soon", async function () {
+                    const { vault, lockId } = await loadFixture(deployVaultWithLockFixture)
+                    await expect(vault.withdraw(lockId)).to.be.revertedWith(
+                        "Unlock time has not expired"
+                    );
+                })
+
+                it("Should revert with the right error if called from another account", async function () {
+                    const { vault, lockId, unlockTime, otherAccount } = await loadFixture(deployVaultWithLockFixture)
+                    await time.increaseTo(unlockTime);
+                    await expect(vault.connect(otherAccount).withdraw(lockId)).to.be.revertedWith(
+                        "Caller is not the owner"
+                    );
+                })
+
+                it("Should revert with the right error if the tokens are already withdrawn", async function () {
+                    const { vault, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
+                    await time.increaseTo(unlockTime);
+                    await vault.withdraw(lockId)
+                    await expect(vault.withdraw(lockId)).to.be.revertedWith(
+                        "Tokens already withdrawn"
+                    );
+                })
+                
+                it("Shouldn't fail if the unlock time has expired and the owner calls it", async function () {
+                    const { vault, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
+                    await time.increaseTo(unlockTime);
+                    await expect(vault.withdraw(lockId)).not.to.be.reverted
+                })
+
+
+            })
+
+        })
     })
+
 })
