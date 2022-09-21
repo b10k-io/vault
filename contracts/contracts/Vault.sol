@@ -25,6 +25,16 @@ contract Vault is Ownable, Pausable {
     Lock[] private _locks;
     mapping(address => uint[]) private _lockIdsByOwner;
 
+    // EVENTS
+
+    event LockAdded(
+        uint256 indexed id,
+        address token,
+        address owner,
+        uint256 amount,
+        uint256 unlockDate
+    );
+
     // PUBLIC SETTERS
 
     function lock(
@@ -33,7 +43,9 @@ contract Vault is Ownable, Pausable {
         uint256 _amount,
         uint _unlockTime
     ) external returns (uint) {
-        return _createLock(_token, _owner, _amount, _unlockTime);
+        uint id = _createLock(_token, _owner, _amount, _unlockTime);
+        emit LockAdded(id, _token, _owner, _amount, _unlockTime);
+        return id;
     }
 
     // PUBLIC GETTERS

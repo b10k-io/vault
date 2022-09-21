@@ -22,14 +22,14 @@ describe("Vault", function () {
     }
 
     async function defaultLock() {
-        const token = await loadFixture(deployTokenFixture);
+        const token = await deployTokenFixture();
         const unlockTime = (await time.latest()) + ONE_YEAR_IN_SECS;
         const amount = TEN_THOUSAND_ETHER;
         return { token, unlockTime, amount };
     }
 
     async function deployVaultWithLockFixture() {
-        const { vault, owner, otherAccount } = await loadFixture(deployVaultFixture);
+        const { vault, owner, otherAccount } = await deployVaultFixture();
         const { token, unlockTime, amount } = await defaultLock();
         await token.approve(vault.address, amount);
         const lockId = await vault.callStatic.lock(token.address, owner.address, amount, unlockTime)
@@ -47,28 +47,44 @@ describe("Vault", function () {
     describe("Lock", function () {
 
         describe("Creation", function () {
-            it("Should set the right token", async function () {
-                const { vault, token, lockId } = await loadFixture(deployVaultWithLockFixture)
-                const lock = await vault.getLockAt(lockId)
-                expect(await lock.token).to.equal(token.address);
-            })
 
-            it("Should set the right owner", async function () {
-                const { vault, owner, lockId } = await loadFixture(deployVaultWithLockFixture)
-                const lock = await vault.getLockAt(lockId)
-                expect(await lock.owner).to.equal(owner.address);
+            describe("Validations", function () {
+                it("Should set the right token", async function () {
+                    const { vault, token, lockId } = await loadFixture(deployVaultWithLockFixture)
+                    const lock = await vault.getLockAt(lockId)
+                    expect(await lock.token).to.equal(token.address);
+                })
+
+                it("Should set the right owner", async function () {
+                    const { vault, owner, lockId } = await loadFixture(deployVaultWithLockFixture)
+                    const lock = await vault.getLockAt(lockId)
+                    expect(await lock.owner).to.equal(owner.address);
+                });
+
+                it("Should set the right amount", async function () {
+                    const { vault, amount, lockId } = await loadFixture(deployVaultWithLockFixture)
+                    const lock = await vault.getLockAt(lockId)
+                    expect(await lock.amount).to.equal(amount);
+                });
+
+                it("Should set the right unlock time", async function () {
+                    const { vault, unlockTime, lockId } = await loadFixture(deployVaultWithLockFixture)
+                    const lock = await vault.getLockAt(lockId)
+                    expect(await lock.unlockTime).to.equal(unlockTime);
+                });
             });
 
-            it("Should set the right amount", async function () {
-                const { vault, amount, lockId } = await loadFixture(deployVaultWithLockFixture)
-                const lock = await vault.getLockAt(lockId)
-                expect(await lock.amount).to.equal(amount);
-            });
-
-            it("Should set the right unlock time", async function () {
-                const { vault, unlockTime, lockId } = await loadFixture(deployVaultWithLockFixture)
-                const lock = await vault.getLockAt(lockId)
-                expect(await lock.unlockTime).to.equal(unlockTime);
+            describe("Events", function () {
+                it("Should emit event on creation", async function () {
+                    const { vault, owner } = await deployVaultFixture();
+                    const { token, unlockTime, amount } = await defaultLock();
+                    await token.approve(vault.address, amount);
+                    const lockId = await vault.callStatic.lock(token.address, owner.address, amount, unlockTime)
+                    await expect(vault.lock(token.address, owner.address, amount, unlockTime))
+                        .to.emit(vault, "LockAdded").withArgs(
+                            lockId, token.address, owner.address, amount, unlockTime
+                        )
+                })
             });
         })
 
