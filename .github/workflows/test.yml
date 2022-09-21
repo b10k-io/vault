@@ -25,9 +25,12 @@ jobs:
     
     - name: Install packages
       run: yarn install --frozen-lockfile
+      working-directory: ./contracts
     
     - name: Build project
       run: npx hardhat compile
+      working-directory: ./contracts
     
     - name: Run tests
       run: npx hardhat test
+      working-directory: ./contracts
