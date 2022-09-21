@@ -2,16 +2,16 @@ import { ethernal, ethers } from "hardhat";
 
 async function main() {
   
-  const Vault = await ethers.getContractFactory("Vault");
-  const vault = await Vault.deploy();
+  const Token = await ethers.getContractFactory("StandardToken");
+  const token = await Token.deploy(ethers.utils.parseEther("10000"));
 
-  await vault.deployed();
+  await token.deployed();
   await ethernal.push({
-    name: "Vault",
-    address: vault.address
+    name: "StandardToken",
+    address: token.address
   })
 
-  console.log(`Vault deployed to ${vault.address}`);
+  console.log(`Token deployed to ${token.address}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
