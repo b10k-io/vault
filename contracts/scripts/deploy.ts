@@ -1,5 +1,7 @@
 import { ethernal, ethers } from "hardhat";
 
+ethernal.resetWorkspace("Vault")
+
 async function main() {
   
   const Vault = await ethers.getContractFactory("Vault");
