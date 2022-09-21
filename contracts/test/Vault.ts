@@ -30,7 +30,7 @@ describe("Vault", function () {
 
     async function deployVaultWithLockFixture() {
         const { vault, owner, otherAccount } = await loadFixture(deployVaultFixture);
-        const { token , unlockTime, amount } = await defaultLock();
+        const { token, unlockTime, amount } = await defaultLock();
         await token.approve(vault.address, amount);
         const lockId = await vault.callStatic.lock(token.address, owner.address, amount, unlockTime)
         await vault.lock(token.address, owner.address, amount, unlockTime)
@@ -52,13 +52,13 @@ describe("Vault", function () {
                 const lock = await vault.getLockAt(lockId)
                 expect(await lock.token).to.equal(token.address);
             })
-            
+
             it("Should set the right owner", async function () {
                 const { vault, owner, lockId } = await loadFixture(deployVaultWithLockFixture)
                 const lock = await vault.getLockAt(lockId)
                 expect(await lock.owner).to.equal(owner.address);
             });
-            
+
             it("Should set the right amount", async function () {
                 const { vault, amount, lockId } = await loadFixture(deployVaultWithLockFixture)
                 const lock = await vault.getLockAt(lockId)
@@ -86,6 +86,18 @@ describe("Vault", function () {
                 expect(lock.owner).to.equal(owner.address)
                 expect(lock.amount).to.equal(amount)
                 expect(lock.unlockTime).to.equal(unlockTime)
+            })
+
+            it("Should get total lock count for owner", async function () {
+                const { vault, owner, otherAccount } = await loadFixture(deployVaultWithLockFixture);
+                expect(await vault.getTotalLockCountForOwner(owner.address)).to.equal(1);
+                expect(await vault.getTotalLockCountForOwner(otherAccount.address)).to.equal(0);
+            })
+
+            it("Should get lock ids for owner", async function () {
+                const { vault, owner, otherAccount } = await loadFixture(deployVaultWithLockFixture);
+                expect(await vault.getTotalLockIdsForOwner(owner.address)).to.eql([eth(0)]);
+                expect(await vault.getTotalLockIdsForOwner(otherAccount.address)).to.eql([]);
             })
         })
     })

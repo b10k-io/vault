@@ -23,6 +23,7 @@ contract Vault is Ownable, Pausable {
     }
 
     Lock[] private _locks;
+    mapping(address => uint[]) private _lockIdsByOwner;
 
     // PUBLIC SETTERS
 
@@ -45,6 +46,14 @@ contract Vault is Ownable, Pausable {
         return _locks.length;
     }
 
+    function getTotalLockCountForOwner(address _owner) public view returns (uint) {
+        return _lockIdsByOwner[_owner].length;
+    }
+
+    function getTotalLockIdsForOwner(address _owner) public view returns (uint[] memory) {
+        return _lockIdsByOwner[_owner];
+    }
+
     // PRIVATE SETTERS
 
     function _createLock(
@@ -56,6 +65,7 @@ contract Vault is Ownable, Pausable {
         uint id = _locks.length;
         Lock memory newLock = Lock(id, _token, _owner, _amount, _unlockTime);
         _locks.push(newLock);
+        _lockIdsByOwner[_owner].push(id);
         return id;
     }
 }
