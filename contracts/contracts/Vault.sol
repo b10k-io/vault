@@ -28,7 +28,15 @@ contract Vault is Ownable, Pausable {
 
     // EVENTS
 
-    event LockAdded(
+    event Deposit(
+        uint256 indexed id,
+        address token,
+        address owner,
+        uint256 amount,
+        uint256 unlockDate
+    );
+
+    event Withdraw(
         uint256 indexed id,
         address token,
         address owner,
@@ -38,7 +46,7 @@ contract Vault is Ownable, Pausable {
 
     // PUBLIC SETTERS
 
-    function lock(
+    function deposit(
         address _token,
         address _owner,
         uint256 _amount,
@@ -46,17 +54,18 @@ contract Vault is Ownable, Pausable {
     ) external returns (uint) {
         uint id = _createLock(_token, _owner, _amount, _unlockTime);
         _safeTransferFromExactAmount(_token, _owner, address(this), _amount);
-        emit LockAdded(id, _token, _owner, _amount, _unlockTime);
+        emit Deposit(id, _token, _owner, _amount, _unlockTime);
         return id;
     }
 
     function withdraw(uint _lockId) external {
-        Lock storage userLock = _locks[_lockId];
-        require(msg.sender == userLock.owner, "Caller is not the owner");
-        require(block.timestamp >= userLock.unlockTime, "Unlock time has not expired");
-        require(userLock.amountWithdrawn == 0, "Tokens already withdrawn");
-        IERC20(userLock.token).safeTransfer(msg.sender, userLock.amount);
-        userLock.amountWithdrawn = userLock.amount;
+        Lock storage lock = _locks[_lockId];
+        require(msg.sender == lock.owner, "Caller is not the owner");
+        require(block.timestamp >= lock.unlockTime, "Unlock time has not expired");
+        require(lock.amountWithdrawn == 0, "Tokens already withdrawn");
+        IERC20(lock.token).safeTransfer(msg.sender, lock.amount);
+        emit Withdraw(lock.id, lock.token, lock.owner, lock.amount, lock.unlockTime);
+        lock.amountWithdrawn = lock.amount;
     }
 
     // PUBLIC GETTERS

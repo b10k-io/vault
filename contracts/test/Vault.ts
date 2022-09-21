@@ -32,8 +32,8 @@ describe("Vault", function () {
         const { vault, owner, otherAccount } = await deployVaultFixture();
         const { token, unlockTime, amount } = await defaultLock();
         await token.approve(vault.address, amount);
-        const lockId = await vault.callStatic.lock(token.address, owner.address, amount, unlockTime)
-        await vault.lock(token.address, owner.address, amount, unlockTime)
+        const lockId = await vault.callStatic.deposit(token.address, owner.address, amount, unlockTime)
+        await vault.deposit(token.address, owner.address, amount, unlockTime)
         return { vault, owner, otherAccount, token, unlockTime, amount, lockId }
     }
 
@@ -79,9 +79,9 @@ describe("Vault", function () {
                     const { vault, owner } = await deployVaultFixture();
                     const { token, unlockTime, amount } = await defaultLock();
                     await token.approve(vault.address, amount);
-                    const lockId = await vault.callStatic.lock(token.address, owner.address, amount, unlockTime)
-                    await expect(vault.lock(token.address, owner.address, amount, unlockTime))
-                        .to.emit(vault, "LockAdded").withArgs(
+                    const lockId = await vault.callStatic.deposit(token.address, owner.address, amount, unlockTime)
+                    await expect(vault.deposit(token.address, owner.address, amount, unlockTime))
+                        .to.emit(vault, "Deposit").withArgs(
                             lockId, token.address, owner.address, amount, unlockTime
                         )
                 })
@@ -94,13 +94,13 @@ describe("Vault", function () {
                     await token.approve(vault.address, amount);
 
                     // NOT WORKING. SEE ISSUE: https://github.com/NomicFoundation/hardhat/issues/3097
-                    // await expect(vault.lock(token.address, owner.address, amount, unlockTime))
+                    // await expect(vault.deposit(token.address, owner.address, amount, unlockTime))
                     //     .to.changeTokenBalances(token, [owner, vault], [-amount, amount])
 
                     // BEGIN WORK AROUND
                     expect(await token.balanceOf(owner.address)).to.equal(amount)
                     expect(await token.balanceOf(vault.address)).to.equal(eth(0))
-                    await vault.lock(token.address, owner.address, amount, unlockTime)
+                    await vault.deposit(token.address, owner.address, amount, unlockTime)
                     expect(await token.balanceOf(owner.address)).to.equal(eth(0))
                     expect(await token.balanceOf(vault.address)).to.equal(amount)
                     // END WORK AROUND
@@ -164,15 +164,25 @@ describe("Vault", function () {
                         "Tokens already withdrawn"
                     );
                 })
-                
+
                 it("Shouldn't fail if the unlock time has expired and the owner calls it", async function () {
                     const { vault, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
                     await time.increaseTo(unlockTime);
                     await expect(vault.withdraw(lockId)).not.to.be.reverted
                 })
 
-
             })
+
+            describe("Events", function () {
+                it("Should emit an event on withdrawals", async function () {
+                    const { vault, token, owner, amount, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
+                    await time.increaseTo(unlockTime);
+                    await expect(vault.withdraw(lockId))
+                        .to.emit(vault, "Withdraw").withArgs(
+                            lockId, token.address, owner.address, amount, unlockTime
+                        )
+                });
+            });
 
         })
     })
