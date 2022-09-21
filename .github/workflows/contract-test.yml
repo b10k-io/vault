@@ -12,7 +12,6 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    working-directory: ./contracts
     
     steps:
     - name: Checkout code
@@ -22,9 +21,11 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 16
+      working-directory: ./contracts
     
     - name: Install packages
       run: yarn install --frozen-lockfile
+      working-directory: ./contracts
     
     - name: Build project
       run: npx hardhat compile
