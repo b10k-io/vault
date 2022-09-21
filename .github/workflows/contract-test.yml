@@ -9,14 +9,14 @@ on:
       - main
 
 jobs:
-  build:
+  test:
     name: Test
     runs-on: ubuntu-latest
+    working-directory: ./contracts
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      working-directory: ./contracts
     
     - name: Install Node.js
       uses: actions/setup-node@v3
