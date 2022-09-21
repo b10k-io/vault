@@ -44,6 +44,7 @@ contract Vault is Ownable, Pausable {
         uint _unlockTime
     ) external returns (uint) {
         uint id = _createLock(_token, _owner, _amount, _unlockTime);
+        _safeTransferFromExactAmount(_token, _owner, address(this), _amount);
         emit LockAdded(id, _token, _owner, _amount, _unlockTime);
         return id;
     }
@@ -79,5 +80,17 @@ contract Vault is Ownable, Pausable {
         _locks.push(newLock);
         _lockIdsByOwner[_owner].push(id);
         return id;
+    }
+
+    function _safeTransferFromExactAmount(
+        address _token,
+        address _sender,
+        address _receipient,
+        uint256 _amount
+    ) private {
+        uint256 beforeBalance = IERC20(_token).balanceOf(_receipient);
+        IERC20(_token).safeTransferFrom(_sender, _receipient, _amount);
+        uint256 afterBalance = IERC20(_token).balanceOf(_receipient);
+        require(afterBalance - beforeBalance == _amount, "Incorrect amount of tokens transferred");
     }
 }

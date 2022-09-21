@@ -86,6 +86,26 @@ describe("Vault", function () {
                         )
                 })
             });
+
+            describe("Transfer", function () {
+                it("Should transfer amount from owner to vault", async function () {
+                    const { vault, owner } = await deployVaultFixture();
+                    const { token, unlockTime, amount } = await defaultLock();
+                    await token.approve(vault.address, amount);
+
+                    // NOT WORKING. SEE ISSUE: https://github.com/NomicFoundation/hardhat/issues/3097
+                    // await expect(vault.lock(token.address, owner.address, amount, unlockTime))
+                    //     .to.changeTokenBalances(token, [owner, vault], [-amount, amount])
+
+                    // BEGIN WORK AROUND
+                    expect(await token.balanceOf(owner.address)).to.equal(amount)
+                    expect(await token.balanceOf(vault.address)).to.equal(eth(0))
+                    await vault.lock(token.address, owner.address, amount, unlockTime)
+                    expect(await token.balanceOf(owner.address)).to.equal(eth(0))
+                    expect(await token.balanceOf(vault.address)).to.equal(amount)
+                    // END WORK AROUND
+                })
+            })
         })
 
         describe("Access", function () {
