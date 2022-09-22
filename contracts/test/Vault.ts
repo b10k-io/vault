@@ -39,16 +39,16 @@ describe("Vault", function () {
 
     async function deployMultipleLocks(n: number) {
         const { vault, owner } = await deployVaultFixture();
-        const { token, unlockTime, amount } = await defaultLock();
-        await token.approve(vault.address, amount);
-        const lockedAmount = amount.div(n);
+        const { token, unlockTime, amount: totalAmount } = await defaultLock();
+        await token.approve(vault.address, totalAmount);
+        const lockedAmount = totalAmount.div(n);
         const lockIds = []
         for (let index = 0; index < n; index++) {
             const lockId = await vault.callStatic.deposit(token.address, owner.address, lockedAmount, unlockTime)
             await vault.deposit(token.address, owner.address, lockedAmount, unlockTime)
             lockIds.push(lockId)
         }
-        return { vault, token, unlockTime, lockedAmount, lockIds, owner }
+        return { vault, token, unlockTime, lockedAmount, lockIds, owner, totalAmount }
     }
 
     describe("Deployment", function () {
@@ -60,7 +60,7 @@ describe("Vault", function () {
 
     describe("Lock", function () {
 
-        describe("Creation", function () {
+        describe("Deposits", function () {
 
             describe("Validations", function () {
                 it("Should set the right token", async function () {
@@ -86,6 +86,17 @@ describe("Vault", function () {
                     const lock = await vault.getLockAt(lockId)
                     expect(await lock.unlockTime).to.equal(unlockTime);
                 });
+
+                it("Should add amount to token total", async function () {
+                    const { vault, owner } = await deployVaultFixture()
+                    const token = await deployTokenFixture()
+                    const amount = eth(1000)
+                    const beforeAmount = await vault.getTotalLockedByToken(token.address);
+                    await token.approve(vault.address, amount)
+                    await vault.deposit(token.address, owner.address, amount, ethers.constants.MaxUint256)
+                    const afterAmount = await vault.getTotalLockedByToken(token.address);
+                    expect(afterAmount).to.equal(beforeAmount.add(amount));
+                })
             });
 
             describe("Events", function () {
@@ -123,57 +134,81 @@ describe("Vault", function () {
         })
 
         describe("Access", function () {
-            it("Should get total lock count", async function () {
-                const { vault } = await loadFixture(deployVaultWithLockFixture)
-                expect(await vault.getTotalLockCount()).to.equal(1)
-            })
 
-            it("Should get lock at index", async function () {
-                const { vault, lockId, token, owner, amount, unlockTime } = await loadFixture(deployVaultWithLockFixture)
-                const lock = await vault.getLockAt(lockId)
-                expect(lock.id).to.equal(lockId)
-                expect(lock.token).to.equal(token.address)
-                expect(lock.owner).to.equal(owner.address)
-                expect(lock.amount).to.equal(amount)
-                expect(lock.unlockTime).to.equal(unlockTime)
-            })
+            describe("Locks", function () {
 
-            it("Should get total lock count for owner", async function () {
-                const { vault, owner, otherAccount } = await loadFixture(deployVaultWithLockFixture);
-                expect(await vault.getTotalLockCountForOwner(owner.address)).to.equal(1);
-                expect(await vault.getTotalLockCountForOwner(otherAccount.address)).to.equal(0);
-            })
+                it("Should get total lock count", async function () {
+                    const { vault } = await loadFixture(deployVaultWithLockFixture)
+                    expect(await vault.getTotalLockCount()).to.equal(1)
+                })
 
-            it("Should get lock ids for owner", async function () {
-                const { vault, owner, otherAccount } = await loadFixture(deployVaultWithLockFixture);
-                expect(await vault.getTotalLockIdsForOwner(owner.address)).to.eql([eth(0)]);
-                expect(await vault.getTotalLockIdsForOwner(otherAccount.address)).to.eql([]);
-            })
-
-            it("Should get locks between index", async function () {
-                const { vault, lockIds, token, unlockTime, lockedAmount, owner } = await deployMultipleLocks(5);
-                const locks: [] = await vault.getLocksBetweenIndex(lockIds[0], lockIds.length-1);
-                for (let index = 0; index < locks.length; index++) {
-                    const lock = locks[index];
-                    expect(lock.id).to.equal(lockIds[index])
+                it("Should get lock at index", async function () {
+                    const { vault, lockId, token, owner, amount, unlockTime } = await loadFixture(deployVaultWithLockFixture)
+                    const lock = await vault.getLockAt(lockId)
+                    expect(lock.id).to.equal(lockId)
                     expect(lock.token).to.equal(token.address)
                     expect(lock.owner).to.equal(owner.address)
-                    expect(lock.amount).to.equal(lockedAmount)
+                    expect(lock.amount).to.equal(amount)
                     expect(lock.unlockTime).to.equal(unlockTime)
-                }
+                })
+
+                it("Should get total lock count for owner", async function () {
+                    const { vault, owner, otherAccount } = await loadFixture(deployVaultWithLockFixture);
+                    expect(await vault.getTotalLockCountForOwner(owner.address)).to.equal(1);
+                    expect(await vault.getTotalLockCountForOwner(otherAccount.address)).to.equal(0);
+                })
+
+                it("Should get lock ids for owner", async function () {
+                    const { vault, owner, otherAccount } = await loadFixture(deployVaultWithLockFixture);
+                    expect(await vault.getTotalLockIdsForOwner(owner.address)).to.eql([eth(0)]);
+                    expect(await vault.getTotalLockIdsForOwner(otherAccount.address)).to.eql([]);
+                })
+
+                it("Should get locks between index", async function () {
+                    const { vault, lockIds, token, unlockTime, lockedAmount, owner } = await deployMultipleLocks(5);
+                    const locks: [] = await vault.getLocksBetweenIndex(lockIds[0], lockIds.length - 1);
+                    for (let index = 0; index < locks.length; index++) {
+                        const lock = locks[index];
+                        expect(lock.id).to.equal(lockIds[index])
+                        expect(lock.token).to.equal(token.address)
+                        expect(lock.owner).to.equal(owner.address)
+                        expect(lock.amount).to.equal(lockedAmount)
+                        expect(lock.unlockTime).to.equal(unlockTime)
+                    }
+                })
+
+                it("Should get locks at indexes", async function () {
+                    const { vault, lockIds, token, unlockTime, lockedAmount, owner } = await deployMultipleLocks(5);
+                    const locks: [] = await vault.getLockAtIndexes(lockIds);
+                    for (let index = 0; index < locks.length; index++) {
+                        const lock = locks[index];
+                        expect(lock.id).to.equal(lockIds[index])
+                        expect(lock.token).to.equal(token.address)
+                        expect(lock.owner).to.equal(owner.address)
+                        expect(lock.amount).to.equal(lockedAmount)
+                        expect(lock.unlockTime).to.equal(unlockTime)
+                    }
+                })
+
             })
 
-            it("Should get locks at indexes", async function () {
-                const { vault, lockIds, token, unlockTime, lockedAmount, owner } = await deployMultipleLocks(5);
-                const locks: [] = await vault.getLockAtIndexes(lockIds);
-                for (let index = 0; index < locks.length; index++) {
-                    const lock = locks[index];
-                    expect(lock.id).to.equal(lockIds[index])
-                    expect(lock.token).to.equal(token.address)
-                    expect(lock.owner).to.equal(owner.address)
-                    expect(lock.amount).to.equal(lockedAmount)
-                    expect(lock.unlockTime).to.equal(unlockTime)
-                }
+            describe("Tokens", function () {
+
+                it("Should get total tokens count", async function () {
+                    const { vault } = await loadFixture(deployVaultWithLockFixture)
+                    expect(await vault.getTotalTokenCount()).to.equal(1)
+                })
+
+                it("Should get tokens locked between", async function () {
+                    const { vault, token } = await loadFixture(deployVaultWithLockFixture)
+                    expect(await vault.getTokensBetween(0, 1)).to.include(token.address)
+                })
+
+                it("Should get total locked by token", async function () {
+                    const { vault, token, totalAmount } = await deployMultipleLocks(5);
+                    expect(await vault.getTotalLockedByToken(token.address)).to.equal(totalAmount)
+                })
+
             })
         })
 
@@ -209,6 +244,14 @@ describe("Vault", function () {
                     const { vault, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
                     await time.increaseTo(unlockTime);
                     await expect(vault.withdraw(lockId)).not.to.be.reverted
+                })
+
+                it("Should remove amount from token total", async function () {
+                    const { vault, token, lockId, unlockTime, amount } = await loadFixture(deployVaultWithLockFixture)
+                    const beforeAmount = await vault.getTotalLockedByToken(token.address);
+                    await time.increaseTo(unlockTime);
+                    await vault.withdraw(lockId);
+                    expect(await vault.getTotalLockedByToken(token.address)).to.equal(beforeAmount.sub(amount));
                 })
 
             })

@@ -48,4 +48,13 @@ interface IVault {
     function getLocksBetweenIndex(uint _start, uint _end) external view returns (Lock[] memory);
 
     function getLockAtIndexes(uint[] memory _indexes) external view returns (Lock[] memory);
+
+    function getTotalTokenCount() external view returns (uint);
+
+    function getTokensBetween(uint _start, uint _end) external view returns (address[] memory);
+
+    function getTotalLockedByToken(address _token) external view returns (uint256);
+    
+    // function getLocksToken(address token) external view returns (Lock[] memory);
+
 }

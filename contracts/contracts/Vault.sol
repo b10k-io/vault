@@ -8,15 +8,23 @@ import "./IVault.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 contract Vault is IVault, Ownable, Pausable {
     using SafeERC20 for IERC20;
+    using EnumerableSet for EnumerableSet.AddressSet;
+    using SafeMath for uint256;
 
     constructor() Ownable() Pausable() {}
 
     Lock[] private _locks;
     mapping(address => uint[]) private _lockIdsByOwner;
+
+    EnumerableSet.AddressSet private _tokens;
+
+    mapping(address => uint256) private _totalLockedByToken;
 
     // PUBLIC SETTERS
 
@@ -38,6 +46,7 @@ contract Vault is IVault, Ownable, Pausable {
         require(block.timestamp >= lock.unlockTime, "Unlock time has not expired");
         require(lock.amountWithdrawn == 0, "Tokens already withdrawn");
         IERC20(lock.token).safeTransfer(msg.sender, lock.amount);
+        _totalLockedByToken[lock.token] = _totalLockedByToken[lock.token].sub(lock.amount);
         emit Withdraw(lock.id, lock.token, lock.owner, lock.amount, lock.unlockTime);
         lock.amountWithdrawn = lock.amount;
     }
@@ -85,6 +94,29 @@ contract Vault is IVault, Ownable, Pausable {
         return locks;
     }
 
+    function getTotalTokenCount() external view returns (uint) {
+        return _tokens.length();
+    }
+
+    function getTokensBetween(uint _start, uint _end) external view returns (address[] memory) {
+        uint total = _tokens.length();
+        if (_end >= total) {
+            _end = total - 1;
+        }
+        uint length = _end - _start + 1;
+        address[] memory tokens = new address[](length);
+        uint cur = 0;
+        for (uint i = _start; i <= _end; i++) {
+            tokens[cur] = _tokens.at(i);
+            cur++;
+        }
+        return tokens;
+    }
+
+    function getTotalLockedByToken(address _token) external view returns (uint256) {
+        return _totalLockedByToken[_token];
+    }
+
     // PRIVATE SETTERS
 
     function _createLock(
@@ -97,6 +129,8 @@ contract Vault is IVault, Ownable, Pausable {
         Lock memory newLock = Lock(id, _token, _owner, _amount, _unlockTime, 0);
         _locks.push(newLock);
         _lockIdsByOwner[_owner].push(id);
+        _totalLockedByToken[_token] = _totalLockedByToken[_token].add(_amount);
+        _tokens.add(_token);
         return id;
     }
 
