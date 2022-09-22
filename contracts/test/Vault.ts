@@ -162,6 +162,19 @@ describe("Vault", function () {
                     expect(lock.unlockTime).to.equal(unlockTime)
                 }
             })
+
+            it("Should get locks at indexes", async function () {
+                const { vault, lockIds, token, unlockTime, lockedAmount, owner } = await deployMultipleLocks(5);
+                const locks: [] = await vault.getLockAtIndexes(lockIds);
+                for (let index = 0; index < locks.length; index++) {
+                    const lock = locks[index];
+                    expect(lock.id).to.equal(lockIds[index])
+                    expect(lock.token).to.equal(token.address)
+                    expect(lock.owner).to.equal(owner.address)
+                    expect(lock.amount).to.equal(lockedAmount)
+                    expect(lock.unlockTime).to.equal(unlockTime)
+                }
+            })
         })
 
         describe("Withdrawls", function () {

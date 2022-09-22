@@ -45,5 +45,7 @@ interface IVault {
 
     function getTotalLockIdsForOwner(address _owner) external view returns (uint[] memory);
 
-    function getLocksBetweenIndex(uint start, uint end) external view returns (Lock[] memory);
+    function getLocksBetweenIndex(uint _start, uint _end) external view returns (Lock[] memory);
+
+    function getLockAtIndexes(uint[] memory _indexes) external view returns (Lock[] memory);
 }

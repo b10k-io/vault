@@ -66,10 +66,21 @@ contract Vault is IVault, Ownable, Pausable {
         }
         uint length = _end - _start + 1;
         Lock[] memory locks = new Lock[](length);
-        uint index = 0;
+        uint cur = 0;
         for (uint i = _start; i <= _end; i++) {
-            locks[index] = _locks[i];
-            index++;
+            locks[cur] = _locks[i];
+            cur++;
+        }
+        return locks;
+    }
+
+    function getLockAtIndexes(uint[] memory _indexes) external view returns (Lock[] memory) {
+        uint length = _indexes.length;
+        Lock[] memory locks = new Lock[](length);
+        uint cur = 0;
+        for (uint i = 0; i < length; i++) {
+            locks[cur] = _locks[i];
+            cur++;
         }
         return locks;
     }
