@@ -6,14 +6,14 @@ import reportWebVitals from './reportWebVitals';
 import '@ibm/plex/css/ibm-plex.css';
 import { BrowserRouter } from "react-router-dom";
 
-import { Hardhat, Mainnet, DAppProvider, Config } from '@usedapp/core'
-import { getDefaultProvider } from "ethers"
+import { Hardhat, DAppProvider, Config } from '@usedapp/core'
+import appconfig from './config';
 
 const config: Config = {
+  networks: [Hardhat],
   readOnlyChainId: Hardhat.chainId,
   readOnlyUrls: {
-    [Mainnet.chainId]: getDefaultProvider('mainnet')
-    // [Hardhat.chainId]: getDefaultProvider(),
+    [Hardhat.chainId]: appconfig.hardhat.rpcUrl,
   },
 }
 
