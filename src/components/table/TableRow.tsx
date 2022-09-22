@@ -1,16 +1,29 @@
 import TableCell from "./TableCell"
+import { Lock } from "../../types/Lock"
+import { useName } from "../../hooks/ERC20Metadata";
+import { formatEther, formatTimestamp } from "../helpers/utils";
 
-const TableRow = () => {
+interface ITableRow {
+    lock: Lock
+}
+
+const TableRow = ({ lock }: ITableRow) => {
+
+    const token = {
+        name: useName(lock.token)
+    }
+
+
     return (
         <tr className="group">
             <TableCell klass="group-hover:bg-white group-hover:text-black" to="/vaults/1234">
-                <div>GOD / WBNB</div>
+                <div>{token.name}</div>
             </TableCell>
             <TableCell klass="text-right group-hover:bg-white group-hover:text-black" to="/vaults/1234">
-                <div>1,000</div>
+                <div>{formatEther(lock.amount)}</div>
             </TableCell>
             <TableCell klass="text-right group-hover:bg-white group-hover:text-black" to="/vaults/1234">
-                <div>1m 3w 2d 6h 3m</div>
+                <div>{formatTimestamp(lock.unlockTime.mul(1000))}</div>
             </TableCell>
         </tr>
     )
