@@ -4,45 +4,19 @@ pragma solidity ^0.8.9;
 // // Uncomment this line to use console.log
 import "hardhat/console.sol";
 
+import "./IVault.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract Vault is Ownable, Pausable {
+contract Vault is IVault, Ownable, Pausable {
     using SafeERC20 for IERC20;
 
-    constructor() Ownable() {}
-
-    struct Lock {
-        uint id;
-        address token;
-        address owner;
-        uint256 amount;
-        uint unlockTime;
-        uint256 amountWithdrawn;
-    }
+    constructor() Ownable() Pausable() {}
 
     Lock[] private _locks;
     mapping(address => uint[]) private _lockIdsByOwner;
-
-    // EVENTS
-
-    event Deposit(
-        uint256 indexed id,
-        address token,
-        address owner,
-        uint256 amount,
-        uint256 unlockDate
-    );
-
-    event Withdraw(
-        uint256 indexed id,
-        address token,
-        address owner,
-        uint256 amount,
-        uint256 unlockDate
-    );
 
     // PUBLIC SETTERS
 
@@ -70,20 +44,34 @@ contract Vault is Ownable, Pausable {
 
     // PUBLIC GETTERS
 
-    function getLockAt(uint _lockId) public view returns (Lock memory) {
+    function getLockAt(uint _lockId) external view returns (Lock memory) {
         return _locks[_lockId];
     }
 
-    function getTotalLockCount() public view returns (uint) {
+    function getTotalLockCount() external view returns (uint) {
         return _locks.length;
     }
 
-    function getTotalLockCountForOwner(address _owner) public view returns (uint) {
+    function getTotalLockCountForOwner(address _owner) external view returns (uint) {
         return _lockIdsByOwner[_owner].length;
     }
 
-    function getTotalLockIdsForOwner(address _owner) public view returns (uint[] memory) {
+    function getTotalLockIdsForOwner(address _owner) external view returns (uint[] memory) {
         return _lockIdsByOwner[_owner];
+    }
+
+    function getLocksBetweenIndex(uint _start, uint _end) external view returns (Lock[] memory) {
+        if (_end >= _locks.length) {
+            _end = _locks.length - 1;
+        }
+        uint length = _end - _start + 1;
+        Lock[] memory locks = new Lock[](length);
+        uint index = 0;
+        for (uint i = _start; i <= _end; i++) {
+            locks[index] = _locks[i];
+            index++;
+        }
+        return locks;
     }
 
     // PRIVATE SETTERS

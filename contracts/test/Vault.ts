@@ -37,6 +37,20 @@ describe("Vault", function () {
         return { vault, owner, otherAccount, token, unlockTime, amount, lockId }
     }
 
+    async function deployMultipleLocks(n: number) {
+        const { vault, owner } = await deployVaultFixture();
+        const { token, unlockTime, amount } = await defaultLock();
+        await token.approve(vault.address, amount);
+        const lockedAmount = amount.div(n);
+        const lockIds = []
+        for (let index = 0; index < n; index++) {
+            const lockId = await vault.callStatic.deposit(token.address, owner.address, lockedAmount, unlockTime)
+            await vault.deposit(token.address, owner.address, lockedAmount, unlockTime)
+            lockIds.push(lockId)
+        }
+        return { vault, token, unlockTime, lockedAmount, lockIds, owner }
+    }
+
     describe("Deployment", function () {
         it("Should set the right owner", async function () {
             const { vault, owner } = await loadFixture(deployVaultFixture);
@@ -134,6 +148,19 @@ describe("Vault", function () {
                 const { vault, owner, otherAccount } = await loadFixture(deployVaultWithLockFixture);
                 expect(await vault.getTotalLockIdsForOwner(owner.address)).to.eql([eth(0)]);
                 expect(await vault.getTotalLockIdsForOwner(otherAccount.address)).to.eql([]);
+            })
+
+            it("Should get locks between index", async function () {
+                const { vault, lockIds, token, unlockTime, lockedAmount, owner } = await deployMultipleLocks(5);
+                const locks: [] = await vault.getLocksBetweenIndex(lockIds[0], lockIds.length-1);
+                for (let index = 0; index < locks.length; index++) {
+                    const lock = locks[index];
+                    expect(lock.id).to.equal(lockIds[index])
+                    expect(lock.token).to.equal(token.address)
+                    expect(lock.owner).to.equal(owner.address)
+                    expect(lock.amount).to.equal(lockedAmount)
+                    expect(lock.unlockTime).to.equal(unlockTime)
+                }
             })
         })
 
