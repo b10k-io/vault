@@ -113,7 +113,7 @@ contract Vault is IVault, Ownable, Pausable {
         return tokens;
     }
 
-    function getTotalLockedByToken(address _token) external view returns (uint256) {
+    function getLockedAmountByToken(address _token) external view returns (uint256) {
         return _totalLockedByToken[_token];
     }
 

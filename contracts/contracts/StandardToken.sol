@@ -7,9 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract StandardToken is ERC20 {
 
-    event Withdrawal(uint amount, uint when);
-
-    constructor(uint256 _totalSupply) ERC20("StandardToken", "ST") {
+    constructor(uint256 _totalSupply, string memory _name, string memory _symbol) ERC20(_name, _symbol) {
         _mint(msg.sender, _totalSupply);
     }
 
