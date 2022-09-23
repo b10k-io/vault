@@ -6,14 +6,15 @@ import reportWebVitals from './reportWebVitals';
 import '@ibm/plex/css/ibm-plex.css';
 import { BrowserRouter } from "react-router-dom";
 
-import { Hardhat, DAppProvider, Config } from '@usedapp/core'
+import { Hardhat, DAppProvider, Config, BSCTestnet } from '@usedapp/core'
 import appconfig from './config';
 
 const config: Config = {
-  networks: [Hardhat],
+  networks: [Hardhat, BSCTestnet],
   readOnlyChainId: Hardhat.chainId,
   readOnlyUrls: {
     [Hardhat.chainId]: appconfig.hardhat.rpcUrl,
+    [BSCTestnet.chainId]: appconfig.bsctestnet.rpcUrl
   },
 }
 
