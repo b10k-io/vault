@@ -2,8 +2,8 @@ import React from 'react';
 import { Routes, Route } from "react-router-dom";
 
 import Layout from "./components/pages/Layout";
-import Tokens from "./components/pages/Tokens";
-import Show from "./components/pages/Show";
+import TokenIndex from "./components/pages/tokens/TokenIndex";
+import TokenShow from "./components/pages/tokens/TokenShow";
 import Home from "./components/pages/Home";
 import Dashboard from './components/pages/Dashboard';
 
@@ -15,8 +15,8 @@ function App() {
         <Route path='dashboard' element={<Dashboard />} />
 
         <Route path='tokens'>
-          <Route index element={<Tokens />} />
-          <Route path=':id' element={<Show />} />
+          <Route index element={<TokenIndex />} />
+          <Route path=':id' element={<TokenShow />} />
         </Route>
       </Route>
     </Routes>

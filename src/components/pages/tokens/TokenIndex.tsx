@@ -1,11 +1,11 @@
-import { useGetTotalLockCount, useGetTotalTokenCount, useGetTokensBetween } from "../../hooks/Vault"
-import Table from "../table/Table"
-import Pagination from "../table/Pagination"
-import config from "../../config"
+import { useGetTotalLockCount, useGetTotalTokenCount, useGetTokensBetween } from "../../../hooks/Vault"
+import Table from "../../table/Table"
+import Pagination from "../../table/Pagination"
+import config from "../../../config"
 import { useEffect, useState } from "react"
 import { ethers } from "ethers"
 
-const Tokens = () => {
+const TokenIndex = () => {
 
     const [startIndex, setStartIndex] = useState<number | undefined>() // <number>(0)
     const [endIndex, setEndIndex] = useState<number | undefined>() // <number>(10)
@@ -30,4 +30,4 @@ const Tokens = () => {
     )
 }
 
-export default Tokens
+export default TokenIndex
