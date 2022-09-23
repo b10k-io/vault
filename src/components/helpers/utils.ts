@@ -15,3 +15,7 @@ export function formatTimestamp(bn: BigNumber): string {
     const d = new Date(n)
     return dateFormatter.format(d)
 }
+
+export function formatCommify(bn: BigNumber, dp: number = 4): string {
+    return ethers.utils.commify((+formatEther(bn)).toFixed(dp))
+}

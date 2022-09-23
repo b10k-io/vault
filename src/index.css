@@ -10,5 +10,9 @@ html, body {
 td {
     @apply px-4;
     @apply border-b;
-    @apply border-white/25;
+    @apply border-white/20;
+}
+
+thead > tr > td {
+    border: none;
 }

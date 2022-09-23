@@ -23,7 +23,7 @@ const Header = () => {
                 <div className="flex gap-4 items-center text-sm">
                     { account ? <><span className="text-slate-600">{shortenIfAddress(account)}</span> <span>|</span></> : <></>}
                     { useAuth() && <Link to="/dashboard" className="hover:underline uppercase tracking-widest">Dashboard</Link>}
-                    <Link to="/vaults" className="hover:underline uppercase tracking-widest">Vaults</Link>
+                    <Link to="tokens" className="hover:underline uppercase tracking-widest">Tokens</Link>
                     <MetamaskConnect />
                 </div>
             </div>

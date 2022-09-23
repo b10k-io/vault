@@ -1,29 +1,31 @@
 import TableCell from "./TableCell"
 import { Lock } from "../../types/Lock"
-import { useName } from "../../hooks/ERC20Metadata";
-import { formatEther, formatTimestamp } from "../helpers/utils";
+import { useName, useSymbol } from "../../hooks/ERC20Metadata";
+import { formatEther, formatCommify } from "../helpers/utils";
+import { IToken } from "../../types/IToken";
+import { Link } from "react-router-dom";
 
 interface ITableRow {
-    lock: Lock
+    token: IToken
 }
 
-const TableRow = ({ lock }: ITableRow) => {
+const TableRow = ({ token }: ITableRow) => {
 
-    const token = {
-        name: useName(lock.token)
-    }
-
+    const to = `/tokens/${token.address}`
 
     return (
         <tr className="group">
-            <TableCell klass="group-hover:bg-white group-hover:text-black" to="/vaults/1234">
-                <div>{token.name}</div>
+            <TableCell>
+                <div className="flex flex-col">
+                    <div>{token.name}</div>
+                    <div>{token.symbol}</div>
+                </div>
             </TableCell>
-            <TableCell klass="text-right group-hover:bg-white group-hover:text-black" to="/vaults/1234">
-                <div>{formatEther(lock.amount)}</div>
+            <TableCell klass="text-right">
+                <div>{token.lockedAmount ? formatCommify(token.lockedAmount) : <></>}</div>
             </TableCell>
-            <TableCell klass="text-right group-hover:bg-white group-hover:text-black" to="/vaults/1234">
-                <div>{formatTimestamp(lock.unlockTime.mul(1000))}</div>
+            <TableCell klass="text-right">
+                <Link to={to}>View</Link>
             </TableCell>
         </tr>
     )
