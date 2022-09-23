@@ -32,7 +32,7 @@ const Table = ({ start = 0, end = 10 }: ITable) => {
     }, [tokens])
 
     return (
-        <table className="table-auto w-full mt-8">
+        <table className="table-auto w-full">
             <thead>
                 <tr>
                     <td className="text-sm uppercase text-slate-400 font-semibold">Asset</td>

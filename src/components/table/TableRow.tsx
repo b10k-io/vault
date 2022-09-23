@@ -1,7 +1,5 @@
 import TableCell from "./TableCell"
-import { Lock } from "../../types/Lock"
-import { useName, useSymbol } from "../../hooks/ERC20Metadata";
-import { formatEther, formatCommify } from "../helpers/utils";
+import { formatCommify } from "../helpers/utils";
 import { IToken } from "../../types/IToken";
 import { Link } from "react-router-dom";
 
@@ -25,7 +23,7 @@ const TableRow = ({ token }: ITableRow) => {
                 <div>{token.lockedAmount ? formatCommify(token.lockedAmount) : <></>}</div>
             </TableCell>
             <TableCell klass="text-right">
-                <Link to={to}>View</Link>
+                <Link to={to} className="hover:underline">View</Link>
             </TableCell>
         </tr>
     )

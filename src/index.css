@@ -8,9 +8,13 @@ html, body {
 }
 
 td {
-    @apply px-4;
+    /* @apply px-4; */
     @apply border-b;
     @apply border-white/20;
+}
+
+tr:last-child > td {
+    border: none;
 }
 
 thead > tr > td {

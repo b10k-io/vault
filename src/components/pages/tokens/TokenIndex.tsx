@@ -25,7 +25,9 @@ const TokenIndex = () => {
                 <span>{tokenCount ? <>{tokenCount.toString()}</> : <></>} Tokens</span>
             </h1>
             <Pagination handleIndexChange={handleIndexChange} totalItems={tokenCount ? tokenCount.toNumber() : 0} />
-            <Table start={startIndex} end={endIndex} />
+            <div className="border p-4 mt-8">
+                <Table start={startIndex} end={endIndex} />
+            </div>
         </div>
     )
 }

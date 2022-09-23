@@ -30,6 +30,12 @@ const Pagination = ({
         const pages = Array.from(Array((endPage + 1) - startPage).keys()).map(i => startPage + i);
         setPages(pages)
         const { startIndex, endIndex } = updateIndexes(currentPage, pageSize, totalItems)
+
+        // Make sure it flips to first page if needed
+        if (pages.length === 1 && currentPage !== 1) {
+            setCurrentPage(1)
+        }
+
         handleIndexChange(startIndex, endIndex)
     }, [currentPage, pageSize, maxPages, totalItems])
 
@@ -38,7 +44,7 @@ const Pagination = ({
     }
 
     function handlePageSizeChange(size: number) {
-        setPageSize(size)
+        setPageSize(size)        
     }
 
     return (

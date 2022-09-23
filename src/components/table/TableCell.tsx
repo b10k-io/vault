@@ -5,7 +5,7 @@ interface ITableCell {
 
 const TableCell = ({ klass = "", children }: ITableCell) => {
     return (
-        <td className={["group-hover:bg-white/20 py-4", klass].join(" ")}>
+        <td className={["text-white/60 group-hover:text-white py-4", klass].join(" ")}>
             {children}
         </td>
     )
