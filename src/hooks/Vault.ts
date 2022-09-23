@@ -73,10 +73,10 @@ export function useGetTokensBetween(address: string | undefined, start: BigNumbe
     }
 }
 
-export function useGetTotalLockedByToken(address: string | undefined, token: string | undefined): string[] | undefined {
+export function useGetLockedAmountByToken(address: string | undefined, token: string | undefined): BigNumber | undefined {
     const { value, error } = useCall(address && {
         contract: new Contract(address, IVault.abi),
-        method: "getTotalLockedByToken",
+        method: "getLockedAmountByToken",
         args: [token]
     }) ?? {}
     if (error) {

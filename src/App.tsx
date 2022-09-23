@@ -16,7 +16,7 @@ function App() {
 
         <Route path='tokens'>
           <Route index element={<TokenIndex />} />
-          <Route path=':id' element={<TokenShow />} />
+          <Route path=':address' element={<TokenShow />} />
         </Route>
       </Route>
     </Routes>
