@@ -10,11 +10,14 @@ import { Hardhat, DAppProvider, Config, BSCTestnet } from '@usedapp/core'
 import appconfig from './config';
 
 const config: Config = {
-  networks: [Hardhat, BSCTestnet],
+  networks: [
+    Hardhat, 
+    // BSCTestnet
+  ],
   readOnlyChainId: Hardhat.chainId,
   readOnlyUrls: {
     [Hardhat.chainId]: appconfig.hardhat.rpcUrl,
-    [BSCTestnet.chainId]: appconfig.bsctestnet.rpcUrl
+    // [BSCTestnet.chainId]: appconfig.bsctestnet.rpcUrl
   },
 }
 

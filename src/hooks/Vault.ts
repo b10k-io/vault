@@ -1,21 +1,6 @@
 import { useCall, useCalls } from "@usedapp/core";
 import { BigNumber, Contract } from "ethers";
 import IVault from "../interfaces/IVault.json";
-import { Lock } from "../types/Lock";
-
-export function useGetLocksBetweenIndex(address: string | undefined, start: BigNumber | number | undefined, end: BigNumber | number | undefined): Lock[] | undefined {
-    const { value, error } = useCall(address && {
-        contract: new Contract(address, IVault.abi),
-        method: "getLocksBetweenIndex",
-        args: [start, end]
-    }) ?? {}
-    if (error) {
-        console.error(error.message)
-        return undefined
-    } else {
-        return value?.[0]
-    }
-}
 
 export  function useGetTotalLockCount(address: string | undefined): BigNumber | undefined {
     const { value, error } = useCall(address && {
@@ -31,10 +16,10 @@ export  function useGetTotalLockCount(address: string | undefined): BigNumber | 
     }
 }
 
-function useGetLockAt(address: string | undefined, index: BigNumber): any | undefined {
+function useGetLockById(address: string | undefined, index: BigNumber): any | undefined {
     const { value, error } = useCall(address && {
         contract: new Contract(address, IVault.abi),
-        method: "getLockAt",
+        method: "getLockById",
         args: [index]
     }) ?? {}
     if (error) {
@@ -50,20 +35,6 @@ export function useGetTotalTokenCount(address: string | undefined): BigNumber | 
         contract: new Contract(address, IVault.abi),
         method: "getTotalTokenCount",
         args: []
-    }) ?? {}
-    if (error) {
-        console.error(error.message)
-        return undefined
-    } else {
-        return value?.[0]
-    }
-}
-
-export function useGetTokensBetween(address: string | undefined, start: BigNumber | number | undefined, end: BigNumber | number | undefined): string[] | undefined {
-    const { value, error } = useCall(address && {
-        contract: new Contract(address, IVault.abi),
-        method: "getTokensBetween",
-        args: [start, end]
     }) ?? {}
     if (error) {
         console.error(error.message)
@@ -97,6 +68,66 @@ export function useGetLockedAmountByTokens(address: string | undefined, addresse
     results.forEach((result, idx) => {
         if (result && result.error) {
             console.error(`Error encountered calling 'getLockedAmountByToken' on ${address}: ${result.error.message}`)
+        }
+    })
+    return results.map(result => result?.value?.[0])
+}
+
+export function useGetTokensByIds(address: string | undefined, idList: BigNumber[]): string[] {
+    const calls = idList?.map(id => (address && {
+        contract: new Contract(address, IVault.abi),
+        method: 'getTokenById',
+        args: [id]
+    })) ?? []
+    const results = useCalls(calls) ?? []
+    results.forEach((result, idx) => {
+        if (result && result.error) {
+            console.error(`Error encountered calling 'getTokenById' on ${address}: ${result.error.message}`)
+        }
+    })
+    return results.map(result => result?.value?.[0]).filter(Boolean) as string[]
+}
+
+export  function useGetTokens(address: string | undefined): any | undefined {
+    const { value, error } = useCall(address && {
+        contract: new Contract(address, IVault.abi),
+        method: "getTokens",
+        args: []
+    }) ?? {}
+    if (error) {
+        console.error(error.message)
+        return undefined
+    } else {
+
+        return value?.[0]
+    }
+}
+
+export function useTokensByIds(address: string | undefined, tokenIds: (number | BigNumber)[]): string[] {
+    const calls = tokenIds?.map(id => (address && {
+        contract: new Contract(address, IVault.abi),
+        method: 'getTokenById',
+        args: [BigNumber.from(id)]
+    })) ?? []
+    const results = useCalls(calls) ?? []
+    results.forEach((result, idx) => {
+        if (result && result.error) {
+            console.error(`Error encountered calling 'getTokenById' on ${address}: ${result.error.message}`)
+        }
+    })
+    return results.map(result => result?.value?.[0]).filter(Boolean) as string[]
+}
+
+export function useLockedAmounts(address: string, tokens: string[] | undefined): (BigNumber | undefined)[] {
+    const calls = tokens?.map(token => ({
+        contract: new Contract(address, IVault.abi),
+        method: 'getLockedAmountByToken',
+        args: [token]
+    })) ?? []
+    const results = useCalls(calls) ?? []
+    results.forEach((result, idx) => {
+        if (result && result.error) {
+            console.error(`Error encountered calling 'name' on ${calls[idx]?.contract.address}: ${result.error.message}`)
         }
     })
     return results.map(result => result?.value?.[0])

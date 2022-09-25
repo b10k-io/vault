@@ -119,7 +119,7 @@
           "type": "uint256"
         }
       ],
-      "name": "getLockAt",
+      "name": "getLockById",
       "outputs": [
         {
           "components": [
@@ -165,49 +165,74 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "_owner",
+          "type": "address"
+        }
+      ],
+      "name": "getLockCountByOwner",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        }
+      ],
+      "name": "getLockCountByToken",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_owner",
+          "type": "address"
+        }
+      ],
+      "name": "getLockIdsByOwner",
+      "outputs": [
+        {
           "internalType": "uint256[]",
-          "name": "_indexes",
+          "name": "",
           "type": "uint256[]"
         }
       ],
-      "name": "getLockAtIndexes",
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        }
+      ],
+      "name": "getLockIdsByToken",
       "outputs": [
         {
-          "components": [
-            {
-              "internalType": "uint256",
-              "name": "id",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "token",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "unlockTime",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amountWithdrawn",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct IVault.Lock[]",
+          "internalType": "uint256[]",
           "name": "",
-          "type": "tuple[]"
+          "type": "uint256[]"
         }
       ],
       "stateMutability": "view",
@@ -236,73 +261,30 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_start",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_end",
+          "name": "_tokenId",
           "type": "uint256"
         }
       ],
-      "name": "getLocksBetweenIndex",
+      "name": "getTokenById",
       "outputs": [
         {
-          "components": [
-            {
-              "internalType": "uint256",
-              "name": "id",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "token",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "unlockTime",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amountWithdrawn",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct IVault.Lock[]",
+          "internalType": "address",
           "name": "",
-          "type": "tuple[]"
+          "type": "address"
         }
       ],
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_start",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_end",
-          "type": "uint256"
-        }
-      ],
-      "name": "getTokensBetween",
+      "inputs": [],
+      "name": "getTokens",
       "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        },
         {
           "internalType": "address[]",
           "name": "",
@@ -320,44 +302,6 @@
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_owner",
-          "type": "address"
-        }
-      ],
-      "name": "getTotalLockCountForOwner",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_owner",
-          "type": "address"
-        }
-      ],
-      "name": "getTotalLockIdsForOwner",
-      "outputs": [
-        {
-          "internalType": "uint256[]",
-          "name": "",
-          "type": "uint256[]"
         }
       ],
       "stateMutability": "view",

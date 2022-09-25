@@ -27,8 +27,10 @@ const Pagination = ({
         const { startPage, endPage } = getStartEndPages(totalPages, maxPages, currentPage)
         setStartPage(startPage)
         setEndPage(endPage)
+
         const pages = Array.from(Array((endPage + 1) - startPage).keys()).map(i => startPage + i);
         setPages(pages)
+
         const { startIndex, endIndex } = updateIndexes(currentPage, pageSize, totalItems)
 
         // Make sure it flips to first page if needed
@@ -51,9 +53,9 @@ const Pagination = ({
         <div className="flex justify-between">
             <div>
                 <PaginationButton pageNumber={startPage} currentPage={currentPage} handlePageChange={handlePageChange} text="First" isEdge={true} />
-                <PaginationButton pageNumber={currentPage - 1} currentPage={currentPage} handlePageChange={handlePageChange} text="Prev" />
+                <PaginationButton pageNumber={currentPage - 1} currentPage={currentPage} handlePageChange={handlePageChange} text="Prev" disabled={currentPage === startPage} />
                 {pages.map((pageNumber: number) => <PaginationButton key={pageNumber} pageNumber={pageNumber} currentPage={currentPage} handlePageChange={handlePageChange} text={pageNumber} />)}
-                <PaginationButton pageNumber={currentPage + 1} currentPage={currentPage} handlePageChange={handlePageChange} text="Next" />
+                <PaginationButton pageNumber={currentPage + 1} currentPage={currentPage} handlePageChange={handlePageChange} text="Next" disabled={currentPage === endPage} />
                 <PaginationButton pageNumber={endPage} currentPage={currentPage} handlePageChange={handlePageChange} text="Last" isEdge={true} />
             </div>
             <div>

@@ -54,8 +54,8 @@ export function useDecimal(address: string | undefined): BigNumber | undefined {
     return value?.[0]
 }
 
-export function useNames(tokenAddresses: string[] | undefined): (string | undefined)[] {
-    const calls = tokenAddresses?.map(address => ({
+export function useNames(addresses: string[] | undefined): (string | undefined)[] {
+    const calls = addresses?.map(address => ({
         contract: new Contract(address, IERC20Metadata.abi),
         method: 'name',
         args: []
@@ -69,8 +69,8 @@ export function useNames(tokenAddresses: string[] | undefined): (string | undefi
     return results.map(result => result?.value?.[0])
 }
 
-export function useTotalSupplies(tokenAddresses: string[] | undefined): (BigNumber | undefined)[] {
-    const calls = tokenAddresses?.map(address => ({
+export function useTotalSupplies(addresses: string[] | undefined): (BigNumber | undefined)[] {
+    const calls = addresses?.map(address => ({
         contract: new Contract(address, IERC20Metadata.abi),
         method: 'totalSupply',
         args: []
@@ -84,8 +84,8 @@ export function useTotalSupplies(tokenAddresses: string[] | undefined): (BigNumb
     return results.map(result => result?.value?.[0])
 }
 
-export function useSymbols(tokenAddresses: string[] | undefined): (string | undefined)[] {
-    const calls = tokenAddresses?.map(address => ({
+export function useSymbols(addresses: string[] | undefined): (string | undefined)[] {
+    const calls = addresses?.map(address => ({
         contract: new Contract(address, IERC20Metadata.abi),
         method: 'symbol',
         args: []

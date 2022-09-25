@@ -1,21 +1,25 @@
-import { useGetTotalLockCount, useGetTotalTokenCount, useGetTokensBetween } from "../../../hooks/Vault"
+import { useGetTotalLockCount, useGetTotalTokenCount } from "../../../hooks/Vault"
 import Table from "../../table/Table"
 import Pagination from "../../table/Pagination"
 import config from "../../../config"
 import { useEffect, useState } from "react"
-import { ethers } from "ethers"
+import { BigNumber, ethers } from "ethers"
 
 const TokenIndex = () => {
 
     const [startIndex, setStartIndex] = useState<number | undefined>() // <number>(0)
     const [endIndex, setEndIndex] = useState<number | undefined>() // <number>(10)
 
+    // const [range, setRange] = useState<BigNumber[]>([])
+
     const lockCount = useGetTotalLockCount(config.hardhat.vault)
     const tokenCount = useGetTotalTokenCount(config.hardhat.vault)
 
     function handleIndexChange(startIndex: number, endIndex: number) {
-        setStartIndex(startIndex)
-        setEndIndex(endIndex)
+        if (startIndex >= 0 && endIndex >= 0) {
+            setStartIndex(startIndex)
+            setEndIndex(endIndex)
+        }
     }
 
     return (
@@ -26,7 +30,7 @@ const TokenIndex = () => {
             </h1>
             <Pagination handleIndexChange={handleIndexChange} totalItems={tokenCount ? tokenCount.toNumber() : 0} />
             <div className="border p-4 mt-8">
-                <Table start={startIndex} end={endIndex} />
+                <Table startIndex={startIndex} endIndex={endIndex} />
             </div>
         </div>
     )
