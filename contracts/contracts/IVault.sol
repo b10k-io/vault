@@ -37,24 +37,34 @@ interface IVault {
 
     function withdraw(uint _lockId) external;
 
-    function getLockAt(uint _lockId) external view returns (Lock memory);
+    // NO ARGS
 
     function getTotalLockCount() external view returns (uint);
 
-    function getTotalLockCountForOwner(address _owner) external view returns (uint);
-
-    function getTotalLockIdsForOwner(address _owner) external view returns (uint[] memory);
-
-    function getLocksBetweenIndex(uint _start, uint _end) external view returns (Lock[] memory);
-
-    function getLockAtIndexes(uint[] memory _indexes) external view returns (Lock[] memory);
-
     function getTotalTokenCount() external view returns (uint);
 
-    function getTokensBetween(uint _start, uint _end) external view returns (address[] memory);
+    // BY LOCK ID
 
-    function getLockedAmountByToken(address _token) external view returns (uint256);
+    function getLockById(uint _lockId) external view returns (Lock memory);
+
+    // BY TOKEN ID
+
+    function getTokenById(uint _tokenId) external view returns (address);
+
+    function getTokens() external view returns (uint[] memory, address[] memory);
+
+    // BY OWNER
+
+    function getLockCountByOwner(address _owner) external view returns (uint);
+
+    function getLockIdsByOwner(address _owner) external view returns (uint[] memory);
+
+    // BY TOKEN
+
+    function getLockCountByToken(address _token) external view returns (uint);
+
+    function getLockIdsByToken(address _token) external view returns (uint[] memory);
     
-    // function getLocksToken(address token) external view returns (Lock[] memory);
+    function getLockedAmountByToken(address _token) external view returns (uint256);
 
 }

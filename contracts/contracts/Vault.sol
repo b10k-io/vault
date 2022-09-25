@@ -15,16 +15,18 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 contract Vault is IVault, Ownable, Pausable {
     using SafeERC20 for IERC20;
     using EnumerableSet for EnumerableSet.AddressSet;
+    using EnumerableSet for EnumerableSet.UintSet;
     using SafeMath for uint256;
 
     constructor() Ownable() Pausable() {}
 
     Lock[] private _locks;
-    mapping(address => uint[]) private _lockIdsByOwner;
 
     EnumerableSet.AddressSet private _tokens;
 
     mapping(address => uint256) private _totalLockedByToken;
+    mapping(address => EnumerableSet.UintSet) private _lockIdsByOwner;
+    mapping(address => EnumerableSet.UintSet) private _lockIdsByToken;
 
     // PUBLIC SETTERS
 
@@ -45,77 +47,133 @@ contract Vault is IVault, Ownable, Pausable {
         require(msg.sender == lock.owner, "Caller is not the owner");
         require(block.timestamp >= lock.unlockTime, "Unlock time has not expired");
         require(lock.amountWithdrawn == 0, "Tokens already withdrawn");
-        IERC20(lock.token).safeTransfer(msg.sender, lock.amount);
-        _totalLockedByToken[lock.token] = _totalLockedByToken[lock.token].sub(lock.amount);
+        
+        _removeLock(lock);
         emit Withdraw(lock.id, lock.token, lock.owner, lock.amount, lock.unlockTime);
-        lock.amountWithdrawn = lock.amount;
     }
 
-    // PUBLIC GETTERS
-
-    function getLockAt(uint _lockId) external view returns (Lock memory) {
-        return _locks[_lockId];
-    }
+    // PUBLIC - NO ARGS
 
     function getTotalLockCount() external view returns (uint) {
         return _locks.length;
-    }
-
-    function getTotalLockCountForOwner(address _owner) external view returns (uint) {
-        return _lockIdsByOwner[_owner].length;
-    }
-
-    function getTotalLockIdsForOwner(address _owner) external view returns (uint[] memory) {
-        return _lockIdsByOwner[_owner];
-    }
-
-    function getLocksBetweenIndex(uint _start, uint _end) external view returns (Lock[] memory) {
-        if (_end >= _locks.length) {
-            _end = _locks.length - 1;
-        }
-        uint length = _end - _start + 1;
-        Lock[] memory locks = new Lock[](length);
-        uint cur = 0;
-        for (uint i = _start; i <= _end; i++) {
-            locks[cur] = _locks[i];
-            cur++;
-        }
-        return locks;
-    }
-
-    function getLockAtIndexes(uint[] memory _indexes) external view returns (Lock[] memory) {
-        uint length = _indexes.length;
-        Lock[] memory locks = new Lock[](length);
-        uint cur = 0;
-        for (uint i = 0; i < length; i++) {
-            locks[cur] = _locks[i];
-            cur++;
-        }
-        return locks;
     }
 
     function getTotalTokenCount() external view returns (uint) {
         return _tokens.length();
     }
 
-    function getTokensBetween(uint _start, uint _end) external view returns (address[] memory) {
-        uint total = _tokens.length();
-        if (_end >= total) {
-            _end = total - 1;
+    // PUBLIC - BY LOCK ID
+
+    function getLockById(uint _lockId) external view returns (Lock memory) {
+        return _locks[_lockId];
+    }
+
+    // PUBLIC - BY TOKEN ID
+
+    function getTokenById(uint _tokenId) external view returns (address) {
+        return _tokens.at(_tokenId);
+    }
+
+    function getTokens() external view returns (uint[] memory, address[] memory) {
+        uint length = _tokens.length();
+        uint[] memory tokenIds = new uint[](length);
+        address[] memory tokenAddrs = new address[](length);
+        
+        if (length > 0) {
+            uint cur = 0;
+            for (uint i = 0; i <= length - 1; i++) {
+                tokenIds[cur] = i;
+                tokenAddrs[cur] = _tokens.at(i);
+                console.log(i, tokenAddrs[cur]);
+                cur++;
+            }
         }
-        uint length = _end - _start + 1;
-        address[] memory tokens = new address[](length);
-        uint cur = 0;
-        for (uint i = _start; i <= _end; i++) {
-            tokens[cur] = _tokens.at(i);
-            cur++;
+        return (tokenIds, tokenAddrs);
+    }
+
+    // PUBLIC - BY OWNER
+
+    function getLockCountByOwner(address _owner) external view returns (uint) {
+        return _lockIdsByOwner[_owner].length();
+    }
+
+    function getLockIdsByOwner(address _owner) external view returns (uint[] memory) {
+        EnumerableSet.UintSet storage set = _lockIdsByOwner[_owner];
+        uint length = set.length();
+        uint[] memory lockIds = new uint[](length);
+        if (length > 0) {
+            uint cur = 0;
+            for (uint i = 0; i <= length - 1; i++) {
+                lockIds[cur] = set.at(i);
+                cur++;
+            }
         }
-        return tokens;
+        return lockIds;
+    }
+
+    // PUBLIC - BY TOKEN
+
+    function getLockCountByToken(address _token) external view returns (uint) {
+        return _lockIdsByToken[_token].length();
+    }
+
+    function getLockIdsByToken(address _token) external view returns (uint[] memory) {
+        EnumerableSet.UintSet storage set = _lockIdsByToken[_token];
+        uint length = set.length();
+        uint[] memory lockIds = new uint[](length);
+        if (length > 0) {
+            uint cur = 0;
+            for (uint i = 0; i <= length - 1; i++) {
+                lockIds[cur] = set.at(i);
+                cur++;
+            }
+        }
+        return lockIds;
     }
 
     function getLockedAmountByToken(address _token) external view returns (uint256) {
         return _totalLockedByToken[_token];
     }
+
+    // function getLocksBetweenIndex(uint _start, uint _end) external view returns (Lock[] memory) {
+    //     if (_end >= _locks.length) {
+    //         _end = _locks.length - 1;
+    //     }
+    //     uint length = _end - _start + 1;
+    //     Lock[] memory locks = new Lock[](length);
+    //     uint cur = 0;
+    //     for (uint i = _start; i <= _end; i++) {
+    //         locks[cur] = _locks[i];
+    //         cur++;
+    //     }
+    //     return locks;
+    // }
+
+    // function getLockByIdIndexes(uint[] memory _indexes) external view returns (Lock[] memory) {
+    //     uint length = _indexes.length;
+    //     Lock[] memory locks = new Lock[](length);
+    //     uint cur = 0;
+    //     for (uint i = 0; i < length; i++) {
+    //         locks[cur] = _locks[i];
+    //         cur++;
+    //     }
+    //     return locks;
+    // }
+
+    // function getTokensBetween(uint _start, uint _end) external view returns (address[] memory) {
+    //     uint total = _tokens.length();
+    //     if (_end >= total) {
+    //         _end = total - 1;
+    //     }
+    //     uint length = _end - _start + 1;
+    //     address[] memory tokens = new address[](length);
+    //     uint cur = 0;
+    //     for (uint i = _start; i <= _end; i++) {
+    //         tokens[cur] = _tokens.at(i);
+    //         cur++;
+    //     }
+    //     return tokens;
+    // }
 
     // PRIVATE SETTERS
 
@@ -127,11 +185,29 @@ contract Vault is IVault, Ownable, Pausable {
     ) private returns (uint) {
         uint id = _locks.length;
         Lock memory newLock = Lock(id, _token, _owner, _amount, _unlockTime, 0);
+
         _locks.push(newLock);
-        _lockIdsByOwner[_owner].push(id);
+        _lockIdsByOwner[_owner].add(id);
+        _lockIdsByToken[_token].add(id);
         _totalLockedByToken[_token] = _totalLockedByToken[_token].add(_amount);
         _tokens.add(_token);
+
         return id;
+    }
+
+    function _removeLock(Lock storage _lock) private {
+        IERC20(_lock.token).safeTransfer(msg.sender, _lock.amount);
+        _lock.amountWithdrawn = _lock.amount;
+        _lockIdsByOwner[_lock.owner].remove(_lock.id);
+        _lockIdsByToken[_lock.token].remove(_lock.id);
+        _totalLockedByToken[_lock.token] = _totalLockedByToken[_lock.token].sub(_lock.amount);
+
+
+        // If there are no other locks connected to this token
+        if(_lockIdsByToken[_lock.token].length() == 0) {
+            // Remove the token from _tokens
+            _tokens.remove(_lock.token);
+        }
     }
 
     function _safeTransferFromExactAmount(
