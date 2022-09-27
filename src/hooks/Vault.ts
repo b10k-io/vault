@@ -1,6 +1,7 @@
 import { useCall, useCalls } from "@usedapp/core";
 import { BigNumber, Contract } from "ethers";
 import IVault from "../interfaces/IVault.json";
+import { ILock } from "../types/ILock";
 
 export  function useGetTotalLockCount(address: string | undefined): BigNumber | undefined {
     const { value, error } = useCall(address && {
@@ -16,7 +17,7 @@ export  function useGetTotalLockCount(address: string | undefined): BigNumber | 
     }
 }
 
-function useGetLockById(address: string | undefined, index: BigNumber): any | undefined {
+function useLockById(address: string | undefined, index: BigNumber): any | undefined {
     const { value, error } = useCall(address && {
         contract: new Contract(address, IVault.abi),
         method: "getLockById",
@@ -131,4 +132,32 @@ export function useLockedAmounts(address: string, tokens: string[] | undefined):
         }
     })
     return results.map(result => result?.value?.[0])
+}
+
+export function useLockIdsByToken(address: string, token: string): BigNumber[] | undefined {
+    const { value, error } = useCall(address && {
+        contract: new Contract(address, IVault.abi),
+        method: "getLockIdsByToken",
+        args: [token]
+    }) ?? {}
+    if (error) {
+        console.error(error.message)
+    } else {
+        return value?.[0].filter(Boolean) as BigNumber[]
+    }
+}
+
+export function useLockByIds(address: string, lockIds: BigNumber[] | undefined): ILock[] | undefined {
+    const calls = lockIds?.map(lockId => ({
+        contract: new Contract(address, IVault.abi),
+        method: 'getLockById',
+        args: [lockId]
+    })) ?? []
+    const results = useCalls(calls) ?? []
+    results.forEach((result, idx) => {
+        if (result && result.error) {
+            console.error(`Error encountered calling 'getLockById' on ${calls[idx]?.contract.address}: ${result.error.message}`)
+        }
+    })
+    return results.map(result => result?.value?.[0]).filter(Boolean)
 }

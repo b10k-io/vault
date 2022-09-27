@@ -1,13 +1,7 @@
-import { BigNumber } from "ethers"
 import config from "../../config"
-import { useGetLockedAmountByTokens, useGetTokens, useGetTokensByIds, useGetTotalTokenCount } from "../../hooks/Vault"
 import TableRow from "./TableRow"
-import { Lock } from "../../types/Lock"
-import { useNames, useSymbols } from "../../hooks/ERC20Metadata"
-import { useEffect, useState } from "react"
 import { ITable } from "../../types/ITable"
 import { IToken } from "../../types/IToken"
-import useRange from "../../hooks/useRange"
 import useTable from "../../hooks/useTable"
 
 const Table = ({ startIndex = 0, endIndex = 0 }: ITable) => {

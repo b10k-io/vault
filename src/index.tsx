@@ -9,6 +9,11 @@ import { BrowserRouter } from "react-router-dom";
 import { Hardhat, DAppProvider, Config, BSCTestnet } from '@usedapp/core'
 import appconfig from './config';
 
+Hardhat.blockExplorerUrl = appconfig.hardhat.blockExplorerUrl
+Hardhat.rpcUrl = appconfig.hardhat.rpcUrl
+Hardhat.getExplorerAddressLink = (address: string) => Hardhat.blockExplorerUrl + "address/" + address
+Hardhat.getExplorerTransactionLink = (tx: string) => Hardhat.blockExplorerUrl + "tx/" + tx
+
 const config: Config = {
   networks: [
     Hardhat, 
@@ -19,7 +24,9 @@ const config: Config = {
     [Hardhat.chainId]: appconfig.hardhat.rpcUrl,
     // [BSCTestnet.chainId]: appconfig.bsctestnet.rpcUrl
   },
+  
 }
+
 
 
 const root = ReactDOM.createRoot(

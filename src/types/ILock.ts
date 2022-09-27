@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 
-export interface Lock {
+export interface ILock {
     id: BigNumber
     token: string
     owner: string
