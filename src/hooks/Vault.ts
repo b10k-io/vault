@@ -89,21 +89,6 @@ export function useGetTokensByIds(address: string | undefined, idList: BigNumber
     return results.map(result => result?.value?.[0]).filter(Boolean) as string[]
 }
 
-export  function useGetTokens(address: string | undefined): any | undefined {
-    const { value, error } = useCall(address && {
-        contract: new Contract(address, IVault.abi),
-        method: "getTokens",
-        args: []
-    }) ?? {}
-    if (error) {
-        console.error(error.message)
-        return undefined
-    } else {
-
-        return value?.[0]
-    }
-}
-
 export function useTokensByIds(address: string | undefined, tokenIds: (number | BigNumber)[]): string[] {
     const calls = tokenIds?.map(id => (address && {
         contract: new Contract(address, IVault.abi),

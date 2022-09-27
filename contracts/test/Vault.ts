@@ -231,11 +231,6 @@ describe("Vault", function () {
                     expect(await vault.getTokenById(0)).to.equal(token.address)
                 })
 
-                it("Should get tokens", async function () {
-                    const { vault, token } = await loadFixture(deployVaultWithLockFixture)
-                    expect(await vault.getTokens()).to.include(token.address)
-                })
-
             })
         })
 
