@@ -7,7 +7,7 @@ import { faker } from '@faker-js/faker';
 ethernal.resetWorkspace("Vault")
 
 const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-const ONE_YEAR_IN_MINS = 365 * 24 * 60;
+const ONE_YEAR_IN_MINS = 365 * 24 * 60 * 60;
 
 async function deployContract(name: string, ...args: any) {
     const Contract = await ethers.getContractFactory(name);
@@ -55,7 +55,7 @@ async function main() {
             const wallet = signers[j]
             const amountNb = getRandomNumberBetween(1, 5) * totalSupply / 100
             const amountBn = ethers.utils.parseEther(amountNb.toString())
-            const unlockTime = getRandomNumberBetween(1, 60) * ONE_YEAR_IN_MINS
+            const unlockTime = getRandomNumberBetween(1, 60 * 60)
             randomLock(vault, token, owner, wallet, unlockTime, amountBn)
         }
     }

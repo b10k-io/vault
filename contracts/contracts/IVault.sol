@@ -67,4 +67,8 @@ interface IVault {
     
     function getLockedAmountByToken(address _token) external view returns (uint256);
 
+    // SUPPORT
+
+    function canWithdraw(uint _lockId) external view returns (bool);
+
 }

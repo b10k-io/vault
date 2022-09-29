@@ -175,6 +175,15 @@ contract Vault is IVault, Ownable, Pausable {
     //     return tokens;
     // }
 
+    // SUPPORT 
+
+    function canWithdraw(uint _lockId) external view returns (bool) {
+        Lock memory lock = _locks[_lockId];
+        bool expired = block.timestamp >= lock.unlockTime;
+        bool available = lock.amountWithdrawn == 0;
+        return expired && available;
+    }
+
     // PRIVATE SETTERS
 
     function _createLock(

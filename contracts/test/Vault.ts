@@ -198,6 +198,17 @@ describe("Vault", function () {
                     expect(await vault.getLockIdsByOwner(otherAccount.address)).to.eql([]);
                 })
 
+                it("Should return false on canWithdraw", async function () {
+                    const { vault, lockId } = await loadFixture(deployVaultWithLockFixture)
+                    expect(await vault.canWithdraw(lockId)).to.be.false
+                })
+
+                it("Should return true on canWithdraw", async function () {
+                    const { vault, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
+                    await time.increaseTo(unlockTime);
+                    expect(await vault.canWithdraw(lockId)).to.be.true
+                })
+
             })
 
             describe("Tokens", function () {
