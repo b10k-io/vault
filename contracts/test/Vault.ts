@@ -345,6 +345,48 @@ describe("Vault", function () {
                     // END WORK AROUND
                 })
             })
+        })
+
+        describe("Extend", function () {
+
+            describe("Validations", function () {
+
+                it("Should revert if new unlockTime less than existing unlockTime", async function () {
+                    const { vault, token, owner, amount, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
+                    const newUnlockTime = unlockTime - 1
+                    await expect(vault.extend(lockId, newUnlockTime)).to.be.revertedWith(
+                        "Can't be less than current unlockTime"
+                    )
+                })
+
+                it("Should revert if not lock owner", async function () {
+                    const { vault, otherAccount, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
+                    const newUnlockTime = unlockTime + 1
+                    await expect(vault.connect(otherAccount).extend(lockId, newUnlockTime)).to.be.revertedWith(
+                        "Caller is not the owner"
+                    )
+                })
+
+            })
+
+            describe("Events", function () {
+                it("Should emit an event on withdrawals", async function () {
+                    const { vault, token, owner, amount, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
+                    const newUnlockTime = unlockTime + 1
+                    await expect(vault.extend(lockId, newUnlockTime))
+                        .to.emit(vault, "Extend").withArgs(
+                            lockId, token.address, owner.address, amount, newUnlockTime
+                        )
+                });
+            });
+
+            it("Should extend the unlockTime", async function () {
+                const { vault, otherAccount, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
+                const newUnlockTime = unlockTime + 1
+                await vault.extend(lockId, newUnlockTime)
+                const lock = await vault.getLockById(lockId)
+                expect(lock.unlockTime).to.eq(newUnlockTime)
+            })
 
         })
     })

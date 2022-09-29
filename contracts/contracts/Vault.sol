@@ -52,6 +52,14 @@ contract Vault is IVault, Ownable, Pausable {
         emit Withdraw(lock.id, lock.token, lock.owner, lock.amount, lock.unlockTime);
     }
 
+    function extend(uint _lockId, uint _unlockTime) external {
+        Lock storage lock = _locks[_lockId];
+        require(msg.sender == lock.owner, "Caller is not the owner");
+        require(_unlockTime > lock.unlockTime, "Can't be less than current unlockTime");
+        lock.unlockTime = _unlockTime;
+        emit Extend(lock.id, lock.token, lock.owner, lock.amount, lock.unlockTime);
+    }
+
     // PUBLIC - NO ARGS
 
     function getTotalLockCount() external view returns (uint) {

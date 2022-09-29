@@ -17,7 +17,7 @@ interface IVault {
         address token,
         address owner,
         uint256 amount,
-        uint256 unlockDate
+        uint256 unlockTime
     );
 
     event Withdraw(
@@ -25,7 +25,15 @@ interface IVault {
         address token,
         address owner,
         uint256 amount,
-        uint256 unlockDate
+        uint256 unlockTime
+    );
+
+    event Extend(
+        uint256 indexed id,
+        address token,
+        address owner,
+        uint256 amount,
+        uint256 unlockTime
     );
 
     function deposit(
@@ -36,6 +44,8 @@ interface IVault {
     ) external returns (uint);
 
     function withdraw(uint _lockId) external;
+    
+    function extend(uint _lockId, uint _unlockTime) external;
 
     // NO ARGS
 
