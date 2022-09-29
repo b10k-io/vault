@@ -4,6 +4,7 @@
   "homepage": "https://vault.b10k.io/",
   "private": true,
   "dependencies": {
+    "@headlessui/react": "^1.7.2",
     "@ibm/plex": "^6.1.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
