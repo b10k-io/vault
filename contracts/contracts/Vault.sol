@@ -49,7 +49,7 @@ contract Vault is IVault, Ownable, Pausable {
         require(lock.amountWithdrawn == 0, "Tokens already withdrawn");
         
         _removeLock(lock);
-        emit Withdraw(lock.id, lock.token, lock.owner, lock.amount, lock.unlockTime);
+        emit Withdraw(lock.id, lock.token, lock.owner, lock.amountWithdrawn, lock.unlockTime);
     }
 
     function extend(uint _lockId, uint _unlockTime) external {
@@ -180,11 +180,12 @@ contract Vault is IVault, Ownable, Pausable {
 
     function _removeLock(Lock storage _lock) private {
         IERC20(_lock.token).safeTransfer(msg.sender, _lock.amount);
-        _lock.amountWithdrawn = _lock.amount;
         // _lockIdsByOwner[_lock.owner].remove(_lock.id);
         _lockIdsByToken[_lock.token].remove(_lock.id);
         _totalLockedByToken[_lock.token] = _totalLockedByToken[_lock.token].sub(_lock.amount);
 
+        _lock.amountWithdrawn = _lock.amount;
+        _lock.amount = 0;
 
         // If there are no other locks connected to this token
         if(_lockIdsByToken[_lock.token].length() == 0) {
