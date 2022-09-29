@@ -1,5 +1,7 @@
 import { useEthers, useChainMeta, ChainId, shortenIfAddress } from "@usedapp/core"
 import { BigNumber } from "ethers"
+import ExtendButton from "../components/buttons/ExtendButton"
+import WithdrawButton from "../components/buttons/WithdrawButton"
 import BigNumberCell from "../components/table/cells/BigNumberCell"
 import LinkCell from "../components/table/cells/LinkCell"
 import TableCellWrapper from "../components/table/cells/TableCellWrapper"
@@ -9,10 +11,6 @@ import { useNames } from "./tokens/useNames"
 import { useCanWithdraws } from "./vault/useCanWithdraws"
 import { useGetLocksByIds } from "./vault/useGetLocksByIds"
 import { useIsWithdrawns } from "./vault/useIsWithdrawns"
-
-function handleClick(lockId: BigNumber) {
-    console.log("Withdrawing from lockId:", lockId)
-}
 
 export function usePrivateLockTable(lockIds: BigNumber[] | undefined): ITable {
     const table: ITable = {
@@ -47,8 +45,8 @@ export function usePrivateLockTable(lockIds: BigNumber[] | undefined): ITable {
             <TimestampCell timestamp={lock.unlockTime} />,
             <TableCellWrapper>
                 <div className="flex gap-2 justify-end text-sm">
-                { !isWithdrawn && canWithdraw ? <button onClick={() => handleClick(lock.id)} className="border border-orange-300 py-1 px-2 text-orange-300 hover:underline">Withdraw</button> : <></> }
-                { !isWithdrawn ? <button onClick={() => handleClick(lock.id)} className="border border-blue-400 py-1 px-2 text-blue-400 hover:underline">Extend</button> : <></> }
+                <WithdrawButton lockId={lock.id} canWithdraw={canWithdraw} isWithdrawn={isWithdrawn} />
+                <ExtendButton lockId={lock.id} isWithdrawn={isWithdrawn} />
                 </div>
             </TableCellWrapper>
         ])
