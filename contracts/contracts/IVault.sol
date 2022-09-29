@@ -81,4 +81,6 @@ interface IVault {
 
     function canWithdraw(uint _lockId) external view returns (bool);
 
+    function isWithdrawn(uint _lockId) external view returns (bool);
+
 }

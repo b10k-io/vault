@@ -144,46 +144,6 @@ contract Vault is IVault, Ownable, Pausable {
         return _totalLockedByToken[_token];
     }
 
-    // function getLocksBetweenIndex(uint _start, uint _end) external view returns (Lock[] memory) {
-    //     if (_end >= _locks.length) {
-    //         _end = _locks.length - 1;
-    //     }
-    //     uint length = _end - _start + 1;
-    //     Lock[] memory locks = new Lock[](length);
-    //     uint cur = 0;
-    //     for (uint i = _start; i <= _end; i++) {
-    //         locks[cur] = _locks[i];
-    //         cur++;
-    //     }
-    //     return locks;
-    // }
-
-    // function getLockByIdIndexes(uint[] memory _indexes) external view returns (Lock[] memory) {
-    //     uint length = _indexes.length;
-    //     Lock[] memory locks = new Lock[](length);
-    //     uint cur = 0;
-    //     for (uint i = 0; i < length; i++) {
-    //         locks[cur] = _locks[i];
-    //         cur++;
-    //     }
-    //     return locks;
-    // }
-
-    // function getTokensBetween(uint _start, uint _end) external view returns (address[] memory) {
-    //     uint total = _tokens.length();
-    //     if (_end >= total) {
-    //         _end = total - 1;
-    //     }
-    //     uint length = _end - _start + 1;
-    //     address[] memory tokens = new address[](length);
-    //     uint cur = 0;
-    //     for (uint i = _start; i <= _end; i++) {
-    //         tokens[cur] = _tokens.at(i);
-    //         cur++;
-    //     }
-    //     return tokens;
-    // }
-
     // SUPPORT 
 
     function canWithdraw(uint _lockId) external view returns (bool) {
@@ -191,6 +151,11 @@ contract Vault is IVault, Ownable, Pausable {
         bool expired = block.timestamp >= lock.unlockTime;
         bool available = lock.amountWithdrawn == 0;
         return expired && available;
+    }
+
+    function isWithdrawn(uint _lockId) external view returns (bool) {
+        Lock memory lock = _locks[_lockId];
+        return lock.amountWithdrawn != 0;
     }
 
     // PRIVATE SETTERS

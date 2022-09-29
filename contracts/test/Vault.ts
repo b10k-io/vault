@@ -209,6 +209,18 @@ describe("Vault", function () {
                     expect(await vault.canWithdraw(lockId)).to.be.true
                 })
 
+                it("Should return false on isWithdrawn", async function () {
+                    const { vault, lockId } = await loadFixture(deployVaultWithLockFixture)
+                    expect(await vault.isWithdrawn(lockId)).to.be.false
+                })
+
+                it("Should return true on canWithdraw", async function () {
+                    const { vault, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
+                    await time.increaseTo(unlockTime);
+                    await vault.withdraw(lockId)
+                    expect(await vault.isWithdrawn(lockId)).to.be.true
+                })
+
             })
 
             describe("Tokens", function () {
