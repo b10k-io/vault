@@ -23,7 +23,7 @@ function TabGroup({ groups }: ITabGroup) {
             <div className="flex text-xs">
                 {groups.map((group, key) => <Tab key={key} index={key} isSelected={key === selected} text={group.text} handleClick={handleClick} />)}
             </div>
-            <div>
+            <div className="mt-8">
                 {groups[selected].element}
             </div>
         </div>

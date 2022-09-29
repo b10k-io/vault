@@ -1,9 +1,9 @@
 import { BigNumber } from "ethers"
 import { useState, useEffect } from "react"
-import { useSymbol } from "../../../hooks/tokens/useSymbol"
-import { useTotalSupply } from "../../../hooks/tokens/useTotalSupply"
-import { useGetLockedAmountByToken } from "../../../hooks/vault/useGetLockedAmountByToken"
-import { formatCommify, formatEther, parseEther } from "../../helpers/utils"
+import { useSymbol } from "../../../../hooks/tokens/useSymbol"
+import { useTotalSupply } from "../../../../hooks/tokens/useTotalSupply"
+import { useGetLockedAmountByToken } from "../../../../hooks/vault/useGetLockedAmountByToken"
+import { formatCommify, formatEther, parseEther } from "../../../helpers/utils"
 
 interface ILockInfo {
     tokenAddress: string

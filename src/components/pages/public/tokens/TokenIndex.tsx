@@ -1,10 +1,10 @@
-import Table from "../../table/Table"
-import Pagination from "../../pagination/Pagination"
+import Table from "../../../table/Table"
+import Pagination from "../../../pagination/Pagination"
 import { useState } from "react"
-import useTokensTable from "../../../hooks/useTokensTable"
-import useRange from "../../../hooks/useRange"
-import { useGetTotalLockCount } from "../../../hooks/vault/useGetTotalLockCount"
-import { useGetTotalTokenCount } from "../../../hooks/vault/useGetTotalTokenCount"
+import useTokensTable from "../../../../hooks/useTokensTable"
+import useRange from "../../../../hooks/useRange"
+import { useGetTotalLockCount } from "../../../../hooks/vault/useGetTotalLockCount"
+import { useGetTotalTokenCount } from "../../../../hooks/vault/useGetTotalTokenCount"
 
 const TokenIndex = () => {
 
@@ -14,6 +14,9 @@ const TokenIndex = () => {
     const lockCount = useGetTotalLockCount()
     const tokenCount = useGetTotalTokenCount()
 
+    const tokenIds = useRange(startIndex, endIndex)
+    const table = useTokensTable(tokenIds)
+    
     function handleIndexChange(startIndex: number, endIndex: number) {
         if (startIndex >= 0 && endIndex >= 0) {
             setStartIndex(startIndex)
@@ -21,8 +24,6 @@ const TokenIndex = () => {
         }
     }
 
-    const tokenIds = useRange(startIndex, endIndex)
-    const table = useTokensTable(tokenIds)
 
     return (
         <div>

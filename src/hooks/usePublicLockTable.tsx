@@ -1,12 +1,12 @@
 import { useEthers, useChainMeta, ChainId, shortenIfAddress } from "@usedapp/core"
+import { BigNumber } from "ethers"
 import BigNumberCell from "../components/table/cells/BigNumberCell"
 import LinkCell from "../components/table/cells/LinkCell"
 import TimestampCell from "../components/table/cells/TimestampCell"
 import { ITable } from "../constants/types/Table"
-import { useGetLockIdsByToken } from "./vault/useGetLockIdsByToken"
 import { useGetLocksByIds } from "./vault/useGetLocksByIds"
 
-export function useLockTable(tokenAddress: string): ITable {
+export function usePublicLockTable(lockIds: BigNumber[] | undefined): ITable {
     const table: ITable = {
         headers: [
             { value: "Owner" },
@@ -19,7 +19,6 @@ export function useLockTable(tokenAddress: string): ITable {
     const { chainId } = useEthers()
     const chainMeta = useChainMeta(chainId as ChainId)
 
-    const lockIds = useGetLockIdsByToken(tokenAddress)
     const locks = useGetLocksByIds(lockIds)
 
     for (let index = 0; index < locks.length; index++) {

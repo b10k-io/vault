@@ -1,10 +1,10 @@
 import { useEthers, useChainMeta, ChainId, shortenAddress } from "@usedapp/core"
 import { formatUnits } from "ethers/lib/utils"
-import { useDecimal } from "../../../hooks/tokens/useDecimal"
-import { useName } from "../../../hooks/tokens/useName"
-import { useSymbol } from "../../../hooks/tokens/useSymbol"
-import { useTotalSupply } from "../../../hooks/tokens/useTotalSupply"
-import { formatCommify } from "../../helpers/utils"
+import { useDecimal } from "../../../../hooks/tokens/useDecimal"
+import { useName } from "../../../../hooks/tokens/useName"
+import { useSymbol } from "../../../../hooks/tokens/useSymbol"
+import { useTotalSupply } from "../../../../hooks/tokens/useTotalSupply"
+import { formatCommify } from "../../../helpers/utils"
 
 interface ITokenInfo {
     tokenAddress: string

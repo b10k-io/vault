@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import LockTable from "../../locks/LockTable"
+import LockTable from "../../../tables/PublicLockTable"
 import LockInfo from "../locks/LockInfo"
 import TokenInfo from "./TokenInfo"
 

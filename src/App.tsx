@@ -2,10 +2,10 @@ import React from 'react';
 import { Routes, Route } from "react-router-dom";
 
 import Layout from "./components/pages/Layout";
-import TokenIndex from "./components/pages/tokens/TokenIndex";
-import TokenShow from "./components/pages/tokens/TokenShow";
-import Home from "./components/pages/Home";
-import Dashboard from './components/pages/Dashboard';
+import TokenIndex from "./components/pages/public/tokens/TokenIndex";
+import TokenShow from "./components/pages/public/tokens/TokenShow";
+import Home from "./components/pages/public/Home";
+import Dashboard from './components/pages/private/Dashboard';
 
 function App() {
   return (
