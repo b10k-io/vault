@@ -56,6 +56,7 @@ contract Vault is IVault, Ownable, Pausable {
         Lock storage lock = _locks[_lockId];
         require(msg.sender == lock.owner, "Caller is not the owner");
         require(_unlockTime > lock.unlockTime, "Can't be less than current unlockTime");
+        require(lock.amountWithdrawn == 0, "Funds already withdrawn");
         lock.unlockTime = _unlockTime;
         emit Extend(lock.id, lock.token, lock.owner, lock.amount, lock.unlockTime);
     }

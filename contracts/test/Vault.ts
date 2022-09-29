@@ -351,8 +351,8 @@ describe("Vault", function () {
 
             describe("Validations", function () {
 
-                it("Should revert if new unlockTime less than existing unlockTime", async function () {
-                    const { vault, token, owner, amount, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
+                it("Should revert if less than existing unlockTime", async function () {
+                    const { vault, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
                     const newUnlockTime = unlockTime - 1
                     await expect(vault.extend(lockId, newUnlockTime)).to.be.revertedWith(
                         "Can't be less than current unlockTime"
@@ -364,6 +364,18 @@ describe("Vault", function () {
                     const newUnlockTime = unlockTime + 1
                     await expect(vault.connect(otherAccount).extend(lockId, newUnlockTime)).to.be.revertedWith(
                         "Caller is not the owner"
+                    )
+                })
+
+                it("Should revert if funds withdrawn", async function () {
+                    const { vault, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
+
+                    await time.increaseTo(unlockTime);
+                    await vault.withdraw(lockId);
+
+                    const newUnlockTime = unlockTime + 1
+                    await expect(vault.extend(lockId, newUnlockTime)).to.be.revertedWith(
+                        "Funds already withdrawn"
                     )
                 })
 
