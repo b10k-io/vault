@@ -181,7 +181,7 @@ contract Vault is IVault, Ownable, Pausable {
     function _removeLock(Lock storage _lock) private {
         IERC20(_lock.token).safeTransfer(msg.sender, _lock.amount);
         _lock.amountWithdrawn = _lock.amount;
-        _lockIdsByOwner[_lock.owner].remove(_lock.id);
+        // _lockIdsByOwner[_lock.owner].remove(_lock.id);
         _lockIdsByToken[_lock.token].remove(_lock.id);
         _totalLockedByToken[_lock.token] = _totalLockedByToken[_lock.token].sub(_lock.amount);
 

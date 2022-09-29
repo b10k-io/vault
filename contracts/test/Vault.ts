@@ -299,13 +299,13 @@ describe("Vault", function () {
                     expect(await vault.getLockedAmountByToken(token.address)).to.equal(beforeAmount.sub(amount));
                 })
 
-                it("Should remove lock from owner", async function () {
+                it("Should not remove lock from owner", async function () {
                     const { vault, owner, lockId, unlockTime } = await loadFixture(deployVaultWithLockFixture)
                     const beforeCount: BigNumber = await vault.getLockCountByOwner(owner.address);
                     await time.increaseTo(unlockTime);
                     await vault.withdraw(lockId);
                     const afterCount: BigNumber = await vault.getLockCountByOwner(owner.address);
-                    expect(afterCount).to.equal(beforeCount.sub(1));
+                    expect(afterCount).to.equal(beforeCount);
                 })
 
                 it("Should remove lock from token", async function () {
