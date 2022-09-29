@@ -1,8 +1,8 @@
 import { BigNumber } from "ethers"
 import { useState, useEffect } from "react"
-import config from "../../../config"
-import { useSymbol, useTotalSupply } from "../../../hooks/ERC20Metadata"
-import { useGetLockedAmountByToken } from "../../../hooks/Vault"
+import { useSymbol } from "../../../hooks/tokens/useSymbol"
+import { useTotalSupply } from "../../../hooks/tokens/useTotalSupply"
+import { useGetLockedAmountByToken } from "../../../hooks/vault/useGetLockedAmountByToken"
 import { formatCommify, formatEther, parseEther } from "../../helpers/utils"
 
 interface ILockInfo {
@@ -13,7 +13,7 @@ const LockInfo = ({ tokenAddress }: ILockInfo) => {
 
     const symbol = useSymbol(tokenAddress)
     const totalSupply = useTotalSupply(tokenAddress)
-    const lockedAmount = useGetLockedAmountByToken(config.hardhat.vault, tokenAddress)
+    const lockedAmount = useGetLockedAmountByToken(tokenAddress)
 
     const [percent, setPercent] = useState<BigNumber | undefined>()
 

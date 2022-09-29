@@ -1,6 +1,9 @@
-import { useEthers, useChainMeta, ChainId } from "@usedapp/core"
+import { useEthers, useChainMeta, ChainId, shortenAddress } from "@usedapp/core"
 import { formatUnits } from "ethers/lib/utils"
-import { useName, useSymbol, useDecimal, useTotalSupply } from "../../../hooks/ERC20Metadata"
+import { useDecimal } from "../../../hooks/tokens/useDecimal"
+import { useName } from "../../../hooks/tokens/useName"
+import { useSymbol } from "../../../hooks/tokens/useSymbol"
+import { useTotalSupply } from "../../../hooks/tokens/useTotalSupply"
 import { formatCommify } from "../../helpers/utils"
 
 interface ITokenInfo {
@@ -25,7 +28,9 @@ const TokenInfo = ({ tokenAddress }: ITokenInfo) => {
                     <tr>
                         <td className="py-4">Address</td>
                         <td className="py-4 text-right">
-                            <a href={meta.getExplorerAddressLink(tokenAddress)} className="hover:underline" target="_blank">{tokenAddress}</a></td>
+                            <a href={meta.getExplorerAddressLink(tokenAddress)} className="hover:underline lg:hidden" target="_blank" rel="noreferrer">{shortenAddress(tokenAddress)}</a>
+                            <a href={meta.getExplorerAddressLink(tokenAddress)} className="hover:underline hidden lg:block" target="_blank" rel="noreferrer">{tokenAddress}</a>
+                        </td>
                     </tr>
                     <tr>
                         <td className="py-4">Name</td>
@@ -41,7 +46,7 @@ const TokenInfo = ({ tokenAddress }: ITokenInfo) => {
                     </tr>
                     <tr>
                         <td className="py-4">Total Supply</td>
-                        <td className="py-4 text-right">{totalSupply ? formatCommify(totalSupply) : <></>}</td>
+                        <td className="py-4 text-right">{totalSupply ? <>{formatCommify(totalSupply)} {symbol}</> : <></>}</td>
                     </tr>
                 </tbody>
             </table>

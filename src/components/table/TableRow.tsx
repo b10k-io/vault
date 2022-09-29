@@ -1,30 +1,13 @@
-import TableCell from "./TableCell"
-import { formatCommify } from "../helpers/utils";
-import { IToken } from "../../types/IToken";
-import { Link } from "react-router-dom";
+import { Fragment } from "react"
 
 interface ITableRow {
-    token: IToken
+    row: JSX.Element[]
 }
 
-const TableRow = ({ token }: ITableRow) => {
-
-    const to = `/tokens/${token.address}`
-
+const TableRow = ({ row }: ITableRow) => {
     return (
         <tr className="group">
-            <TableCell>
-                <div className="flex flex-col">
-                    <div>{token.name}</div>
-                    <div>{token.symbol}</div>
-                </div>
-            </TableCell>
-            <TableCell klass="text-right">
-                <div>{token.lockedAmount ? formatCommify(token.lockedAmount) : <></>}</div>
-            </TableCell>
-            <TableCell klass="text-right">
-                <Link to={to} className="hover:underline">View</Link>
-            </TableCell>
+            {row.map((cell, key) => <Fragment key={key}>{cell}</Fragment>)}
         </tr>
     )
 }

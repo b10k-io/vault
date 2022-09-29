@@ -1,19 +1,18 @@
-import { useGetTotalLockCount, useGetTotalTokenCount } from "../../../hooks/Vault"
 import Table from "../../table/Table"
-import Pagination from "../../table/Pagination"
-import config from "../../../config"
-import { useEffect, useState } from "react"
-import { BigNumber, ethers } from "ethers"
+import Pagination from "../../pagination/Pagination"
+import { useState } from "react"
+import useTokensTable from "../../../hooks/useTokensTable"
+import useRange from "../../../hooks/useRange"
+import { useGetTotalLockCount } from "../../../hooks/vault/useGetTotalLockCount"
+import { useGetTotalTokenCount } from "../../../hooks/vault/useGetTotalTokenCount"
 
 const TokenIndex = () => {
 
-    const [startIndex, setStartIndex] = useState<number | undefined>() // <number>(0)
-    const [endIndex, setEndIndex] = useState<number | undefined>() // <number>(10)
+    const [startIndex, setStartIndex] = useState<number>(0)
+    const [endIndex, setEndIndex] = useState<number>(10)
 
-    // const [range, setRange] = useState<BigNumber[]>([])
-
-    const lockCount = useGetTotalLockCount(config.hardhat.vault)
-    const tokenCount = useGetTotalTokenCount(config.hardhat.vault)
+    const lockCount = useGetTotalLockCount()
+    const tokenCount = useGetTotalTokenCount()
 
     function handleIndexChange(startIndex: number, endIndex: number) {
         if (startIndex >= 0 && endIndex >= 0) {
@@ -21,6 +20,9 @@ const TokenIndex = () => {
             setEndIndex(endIndex)
         }
     }
+
+    const tokenIds = useRange(startIndex, endIndex)
+    const table = useTokensTable(tokenIds)
 
     return (
         <div>
@@ -30,7 +32,7 @@ const TokenIndex = () => {
             </h1>
             <Pagination handleIndexChange={handleIndexChange} totalItems={tokenCount ? tokenCount.toNumber() : 0} />
             <div className="border p-4 bg-white/10 mt-8">
-                <Table startIndex={startIndex} endIndex={endIndex} />
+                <Table headers={table.headers} rows={table.rows} />
             </div>
         </div>
     )

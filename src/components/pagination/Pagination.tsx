@@ -39,7 +39,7 @@ const Pagination = ({
         }
 
         handleIndexChange(startIndex, endIndex)
-    }, [currentPage, pageSize, maxPages, totalItems])
+    }, [totalItems, currentPage, handleIndexChange, maxPages, pageSize])
 
     function handlePageChange(pageNumber: number) {
         setCurrentPage(pageNumber);

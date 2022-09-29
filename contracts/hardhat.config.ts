@@ -18,12 +18,12 @@ const config: HardhatUserConfig = {
     serverSync: false // If set to true, blocks & txs will be synced by the server. For this to work, your chain needs to be accessible from the internet. Also, trace won't be synced for now when this is enabled.
   },
   networks: {
-    hardhat: {
-      mining: {
-        auto: false,
-        interval: [1000, 3000]
-      }
-    }
+    // hardhat: {
+    //   mining: {
+    //     auto: false,
+    //     interval: [1000, 3000]
+    //   }
+    // }
   }
 }
 

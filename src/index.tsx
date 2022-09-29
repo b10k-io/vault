@@ -6,23 +6,22 @@ import reportWebVitals from './reportWebVitals';
 import '@ibm/plex/css/ibm-plex.css';
 import { BrowserRouter } from "react-router-dom";
 
-import { Hardhat, DAppProvider, Config, BSCTestnet } from '@usedapp/core'
-import appconfig from './config';
+import { Hardhat, DAppProvider, Config } from '@usedapp/core'
 
-Hardhat.blockExplorerUrl = appconfig.hardhat.blockExplorerUrl
-Hardhat.rpcUrl = appconfig.hardhat.rpcUrl
-Hardhat.getExplorerAddressLink = (address: string) => Hardhat.blockExplorerUrl + "address/" + address
-Hardhat.getExplorerTransactionLink = (tx: string) => Hardhat.blockExplorerUrl + "tx/" + tx
+import * as chains from "./model/chain"
+
+Hardhat.blockExplorerUrl = chains.HardhatExtended.blockExplorerUrl
+Hardhat.rpcUrl = chains.HardhatExtended.rpcUrl
+Hardhat.getExplorerAddressLink = chains.HardhatExtended.getExplorerAddressLink
+Hardhat.getExplorerTransactionLink = chains.HardhatExtended.getExplorerTransactionLink
 
 const config: Config = {
   networks: [
     Hardhat, 
-    // BSCTestnet
   ],
   readOnlyChainId: Hardhat.chainId,
   readOnlyUrls: {
-    [Hardhat.chainId]: appconfig.hardhat.rpcUrl,
-    // [BSCTestnet.chainId]: appconfig.bsctestnet.rpcUrl
+    [Hardhat.chainId]: Hardhat.rpcUrl || "",
   },
   
 }
