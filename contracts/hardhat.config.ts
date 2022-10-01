@@ -21,7 +21,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       mining: {
         auto: false,
-        interval: [1000, 3000]
+        interval: [500, 1000]
       }
     }
   }

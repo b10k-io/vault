@@ -19,7 +19,6 @@ interface IExtendTimeDialog extends IExtendTimeDialogBasic {
 }
 
 interface IExtendTimeDialogFull extends IExtendTimeDialog {
-    lock: ILock
     onSubmit: (data: any) => void
     state: TransactionStatus
 }

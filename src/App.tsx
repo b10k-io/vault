@@ -6,6 +6,7 @@ import TokenIndex from "./components/pages/public/tokens/TokenIndex";
 import TokenShow from "./components/pages/public/tokens/TokenShow";
 import Home from "./components/pages/public/Home";
 import Dashboard from './components/pages/private/Dashboard';
+import CreateLock from './components/pages/private/CreateLock';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Route path='' element={<Layout />}>
         <Route index element={<Home />} />
         <Route path='dashboard' element={<Dashboard />} />
+        <Route path='create' element={<CreateLock />} />
 
         <Route path='tokens'>
           <Route index element={<TokenIndex />} />

@@ -20,10 +20,11 @@ const Header = () => {
                     </div>
                 </Link>
                 </div>
-                <div className="flex gap-4 items-center text-sm">
+                <div className="flex gap-8 items-center text-sm">
                     { account ? <><span className="text-slate-600">{shortenIfAddress(account)}</span> <span>|</span></> : <></>}
+                    { useAuth() && <Link to="create" className="hover:underline uppercase tracking-widest">Create Lock</Link> }
                     { useAuth() && <Link to="/dashboard" className="hover:underline uppercase tracking-widest">Dashboard</Link>}
-                    <Link to="tokens" className="hover:underline uppercase tracking-widest">Tokens</Link>
+                    <Link to="tokens" className="hover:underline uppercase tracking-widest">Locks</Link>
                     <MetamaskConnect />
                 </div>
             </div>
