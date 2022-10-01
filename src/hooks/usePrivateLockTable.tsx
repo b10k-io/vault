@@ -1,4 +1,4 @@
-import { useEthers, useChainMeta, ChainId, shortenIfAddress } from "@usedapp/core"
+import { useEthers, useChainMeta, ChainId } from "@usedapp/core"
 import { BigNumber } from "ethers"
 import ExtendButton from "../components/buttons/ExtendButton"
 import WithdrawButton from "../components/buttons/WithdrawButton"
@@ -46,7 +46,7 @@ export function usePrivateLockTable(lockIds: BigNumber[] | undefined): ITable {
             <TableCellWrapper>
                 <div className="flex gap-2 justify-end text-sm">
                 <WithdrawButton lockId={lock.id} canWithdraw={canWithdraw} isWithdrawn={isWithdrawn} />
-                <ExtendButton lockId={lock.id} isWithdrawn={isWithdrawn} />
+                <ExtendButton lock={lock} isWithdrawn={isWithdrawn} />
                 </div>
             </TableCellWrapper>
         ])
