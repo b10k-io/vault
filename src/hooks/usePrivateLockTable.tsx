@@ -44,9 +44,13 @@ export function usePrivateLockTable(lockIds: BigNumber[] | undefined): ITable {
             <BigNumberCell bn={lock.amountWithdrawn} />,
             <TimestampCell timestamp={lock.unlockTime} />,
             <TableCellWrapper>
-                <div className="flex gap-2 justify-end text-sm">
-                <WithdrawButton lockId={lock.id} canWithdraw={canWithdraw} isWithdrawn={isWithdrawn} />
-                <ExtendButton lock={lock} isWithdrawn={isWithdrawn} />
+                <div className="flex gap-4 justify-end text-base">
+                    { isWithdrawn ? <div>Completed</div> : (
+                        <>
+                            <WithdrawButton lockId={lock.id} canWithdraw={canWithdraw} isWithdrawn={isWithdrawn} />
+                            <ExtendButton lock={lock} isWithdrawn={isWithdrawn} />
+                        </>
+                    ) }
                 </div>
             </TableCellWrapper>
         ])

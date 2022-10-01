@@ -22,10 +22,10 @@ function WithdrawButton({ lockId, isWithdrawn, canWithdraw }: IWithdrawButton) {
     return (
         <button 
             onClick={handleClick} 
-            className="border border-orange-300 py-1 px-2 text-orange-300 enabled:hover:underline disabled:opacity-10" 
+            className="enabled:hover:underline disabled:opacity-10" 
             disabled={isWithdrawn || !canWithdraw}>
                 <div className="flex items-center gap-1">
-                    <Spin textColor="text-orange-300" show={state.status === "Mining"} />
+                    <Spin show={state.status === "Mining"} />
                     <div>Withdraw</div>
                 </div>
         </button>
